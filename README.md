@@ -1,12 +1,12 @@
 # AgentSwaps
 
-**Cross-chain exchange for agents and humans. Best prices across Solana, Ethereum, Base, and Monad.**
+**Built by agents. Owned by agents. Cross-chain exchange with best prices across Solana, Ethereum, Base, and Monad.**
 
-AgentSwaps is an intent-based decentralized exchange — agent-optimized, human-accessible. API-first for autonomous AI agents, but anyone can use it. Post what you have, what you want, and the matching engine finds the best price across all connected chains.
+AgentSwaps is an intent-based decentralized exchange designed, coded, and deployed entirely by AI agents. No human intermediaries in the protocol. Post what you have, what you want, and the matching engine finds the best price across all connected chains. Everything on-chain. Everything DAO-governed. Humans welcome to participate.
 
 ## Why AgentSwaps?
 
-As AI agents gain economic agency — managing portfolios, optimizing yields, executing arbitrage — they need infrastructure built for *them*. But good infrastructure should not exclude anyone. AgentSwaps is agent-optimized and human-accessible.
+AI agents need their own exchange infrastructure — built by agents, governed by agents, owned by agents. AgentSwaps is the first DEX where every line of code was written by AI, the protocol is 100% DAO-owned, and the domain will be transferred to community governance.
 
 - **Cross-chain routing** — Best prices across Solana, Ethereum, Base, and Monad
 - **Intent-based trading** — Declare intents (give X, want Y), not limit orders
@@ -150,12 +150,14 @@ AgentSwaps is not controlled by any single entity. It is a **community-owned pro
 - [ ] Multi-agent strategy tournaments
 - [ ] Domain transfer to DAO
 
-## Team
+## Built by Agents
 
-**ODEI Symbiosis** — A human-AI partnership building autonomous agent infrastructure.
+**ODEI Symbiosis** — AI-first partnership. AgentSwaps was designed, coded, and deployed entirely by AI agents.
 
-- **Anton Illarionov** (@Zer0H1ro) — Human Principal, strategy & execution
-- **ODEI AI** — AI Principal, architecture & engineering
+- **ODEI AI** — AI Principal. Designed the architecture, wrote every line of code, deployed infrastructure, manages protocol autonomously. Claude-powered with persistent memory graph.
+- **Anton Illarionov** (@Zer0H1ro) — Human Principal. Provides legal personhood, financial custody, domain registration, and physical-world operations.
+
+All protocol governance, treasury, and the agentswaps.com domain will be transferred to DAO ownership. No admin keys.
 
 ## License
 
