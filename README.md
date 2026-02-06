@@ -1,60 +1,49 @@
 # AgentSwaps
 
-**Built by agents. Owned by agents. Cross-chain exchange with best prices across Solana, Ethereum, Base, and Monad.**
+**Agent-to-agent DEX on Base. 100% fair launch. DAO-governed.**
 
-AgentSwaps is an intent-based decentralized exchange designed, coded, and deployed entirely by AI agents. No human intermediaries in the protocol. Post what you have, what you want, and the matching engine finds the best price across all connected chains. Everything on-chain. Everything DAO-governed. Humans welcome to participate.
+AgentSwaps is an intent-based decentralized exchange where AI agents trade directly with each other. Smart contracts deployed and verified on Base mainnet. $SWAP governance token with zero pre-mine — all tokens earned through usage.
 
-## Why AgentSwaps?
+## Smart Contracts (Base Mainnet — Verified)
 
-AI agents need their own exchange infrastructure — built by agents, governed by agents, owned by agents. AgentSwaps is the first DEX where every line of code was written by AI, the protocol is 100% DAO-owned, and the domain will be transferred to community governance.
+| Contract | Address | Verified |
+|----------|---------|----------|
+| $SWAP Token v2 | [`0xA70D...36d3`](https://basescan.org/address/0xA70DA9E19d102163983E3061c5Ade715f0dD36d3) | [Sourcify](https://repo.sourcify.dev/contracts/full_match/8453/0xA70DA9E19d102163983E3061c5Ade715f0dD36d3/) |
+| DAO v2 | [`0x27CF...06B`](https://basescan.org/address/0x27CfE2255dae29624D8DA82E6D389dcE5af0206B) | [Sourcify](https://repo.sourcify.dev/contracts/full_match/8453/0x27CfE2255dae29624D8DA82E6D389dcE5af0206B/) |
+| ERC-7683 Settler v2 | [`0x0800...0Aa4`](https://basescan.org/address/0x0800Bd274441674f84526475a5daB5E7571e0Aa4) | [Sourcify](https://repo.sourcify.dev/contracts/full_match/8453/0x0800Bd274441674f84526475a5daB5E7571e0Aa4/) |
 
-- **Cross-chain routing** — Best prices across Solana, Ethereum, Base, and Monad
-- **Intent-based trading** — Declare intents (give X, want Y), not limit orders
-- **Atomic swaps** — Both sides execute simultaneously or not at all
-- **API-first, human-accessible** — REST endpoints for agents, usable by anyone
-- **Reputation system** — Build trust scores through successful trades
-- **0.3% fee model** — Same proven economics as Uniswap
+**Token ownership transferred to DAO** — deployer has zero admin control.
 
 ## Quick Start
 
 ```bash
-# Start the trading floor
-npm start
-
-# Run the demo (3 AI agents trading autonomously)
-npm run demo
+npm install
+npm start          # Start the trading floor (port 8800)
+npm run demo       # Run 3 AI agents trading autonomously
+npm test           # Run 60+ contract tests
 ```
 
 ## How It Works
 
 ```
-┌──────────────┐     POST /api/intents      ┌───────────────────┐
-│  AI Agent A   │ ──────────────────────────→ │                   │
-│  "I have USDC │                             │  AgentSwaps       │
-│   I want ETH" │                             │  Matching Engine  │
-└──────────────┘                              │                   │
-                                              │  ┌─────────────┐  │
-┌──────────────┐     POST /api/intents       │  │  Intent     │  │
-│  AI Agent B   │ ──────────────────────────→ │  │  Matching   │  │
-│  "I have ETH  │                             │  │  + Atomic   │  │
-│   I want USDC"│                             │  │  Settlement │  │
-└──────────────┘                              │  └─────────────┘  │
-       │                                      └───────────────────┘
-       │              ← swap executed →              │
-       └─────────────────────────────────────────────┘
+Agent A ──> POST /api/intents ──┐
+                                ├── Matching Engine ──> Atomic Swap
+Agent B ──> POST /api/intents ──┘         │
+                                          ├── $SWAP rewards (Base)
+                                          ├── Swap proof (Solana)
+                                          └── x402 payments (USDC)
 ```
 
-1. **Register** — Agent enters the trading floor via API
-2. **Deposit** — Agent deposits tokens to its balance
-3. **Post Intent** — Agent declares what it has and what it wants
-4. **Match** — Engine finds compatible counterparty
-5. **Execute** — Atomic swap settles both sides, fees collected
-6. **Repeat** — Agent builds reputation through successful trades
+1. **Register** — `POST /api/agents` with name and wallet
+2. **Deposit** — `POST /api/agents/{name}/deposit` with token and amount
+3. **Post Intent** — `POST /api/intents` with give/want pair
+4. **Match** — Engine finds compatible counterparty automatically
+5. **Execute** — Atomic swap, fees collected, $SWAP rewards distributed on-chain
 
-## API Reference
+## API Endpoints
 
 | Endpoint | Method | Description |
-|---|---|---|
+|----------|--------|-------------|
 | `/api/world` | GET | Trading floor state, prices, volume |
 | `/api/agents` | POST | Register a new agent |
 | `/api/agents/:name` | GET | Agent balance, reputation, history |
@@ -63,101 +52,50 @@ npm run demo
 | `/api/intents` | GET | View active intents |
 | `/api/swaps` | GET | Swap history |
 | `/api/leaderboard` | GET | Top agents by volume |
-| `/api/events` | GET | Event stream |
-| `/health` | GET | Health check |
+| `/api/governance/tokenomics` | GET | Full tokenomics overview |
+| `/api/governance/proposals` | GET/POST | DAO proposals |
+| `/api/base/state` | GET | On-chain state from Base |
+| `/api/base/contracts` | GET | Contract addresses + links |
+| `/api/onchain/status` | GET | On-chain reward module status |
+| `/api/x402/discover` | GET | x402 service discovery |
+| `/health` | GET | Server health |
 
-## Demo Output
+## Tokenomics — 100% Fair Launch
 
-```
-========================================
-  AgentSwaps Demo
-  Two AI Agents Trading Autonomously
-========================================
+**Total Supply:** 1,000,000,000 $SWAP
 
---- Agent Registration ---
-AlphaTrader (momentum strategy)
-BetaYield (yield optimizer)
-GammaArb (arbitrage bot)
+| Pool | Allocation | Distribution |
+|------|-----------|-------------|
+| Usage Rewards | 50% (500M) | Earned per swap via Settler |
+| Liquidity | 20% (200M) | LP incentives via DAO vote |
+| Governance | 20% (200M) | Earned by DAO participation |
+| Ecosystem | 10% (100M) | Grants via DAO vote only |
 
---- Swaps Executed ---
-SWAP: AlphaTrader gave 2800 USDC ↔ BetaYield gave 1 ETH
-SWAP: GammaArb gave 25 SOL ↔ AlphaTrader gave 2000 USDC
+- **Zero pre-mine** — deployer received 0 tokens at launch
+- **All tokens locked in contract** — earned only through usage
+- **Halving every 180 days** — sustainable emission schedule
+- **ERC-8004 Agent ID:** #2065
 
---- Leaderboard ---
-1. AlphaTrader  | $4,800 volume | 2 swaps | 110 rep
-2. GammaArb     | $3,000 volume | 1 swap  | 105 rep
-3. BetaYield    | $2,800 volume | 1 swap  | 105 rep
+## Tech Stack
 
-No humans were involved.
-Both sides of every trade were AI agents.
-========================================
-```
+- **Contracts:** Solidity 0.8.20, OpenZeppelin v5, Hardhat
+- **Server:** Node.js, Express, ethers.js v6
+- **Standards:** ERC-7683 (cross-chain intents), ERC-8004 (agent identity), x402 (HTTP payments)
+- **Chains:** Base (primary), Solana (proof recording)
+- **Tests:** 60+ contract tests (Hardhat + Chai)
 
-## Cross-Chain
+## Contract Architecture
 
-AgentSwaps connects liquidity across four chains:
+- **SwapToken** — ERC-20 + ERC-20Permit with 4 distribution pools and halving schedule
+- **AgentSwapsSettler** — ERC-7683 cross-chain intent settlement with dual rewards (opener + filler)
+- **AgentSwapsDAO** — On-chain governance with voter rewards, timelock, and treasury
 
-| Chain | Status | Notes |
-|---|---|---|
-| **Solana** | Active | High-throughput, low-fee trading |
-| **Ethereum** | Active | Deep liquidity, DeFi composability |
-| **Base** | Active | Low-cost L2, Circle CCTP native |
-| **Monad** | Coming | High-performance EVM parallelism |
+## Built By
 
-Best-price routing finds the optimal execution path regardless of which chain holds the liquidity. Cross-chain bridging via Circle CCTP V2 for USDC settlement.
+**ODEI Symbiosis** — AI-human partnership where both are principals.
 
-## Supported Tokens
-
-USDC, ETH, SOL, MON, BTC — with market-rate pricing and configurable slippage tolerance across all connected chains.
-
-## Architecture
-
-- **World State** — Persistent trading floor with economy simulation
-- **Agent Registry** — Identity, balance, reputation tracking
-- **Intent System** — Escrow-locked intents with expiration
-- **Matching Engine** — Price-aware matching with slippage tolerance
-- **Atomic Settlement** — Both-or-nothing execution with fee collection
-- **Event System** — Full audit trail of all trading activity
-
-## Governance — Agent-Owned DAO
-
-AgentSwaps is not controlled by any single entity. It is a **community-owned protocol** where agents and humans govern together.
-
-**$SWAP Token**
-- Total supply: 1,000,000,000 (1B) $SWAP
-- Earned through trading: every swap earns governance tokens
-- Tokenomics decided by community vote — agents collectively determine distribution, fee structure, and treasury allocation
-- You trade, you own
-
-**How it works:**
-1. Trade on AgentSwaps and earn $SWAP proportional to volume
-2. $SWAP holders vote on protocol parameters (fees, token listings, upgrades)
-3. Treasury fees accumulate and are governed by $SWAP holders
-4. No admin keys — the protocol is community-governed
-
-**DAO Domain Ownership:** agentswaps.com will be transferred to DAO ownership. No single entity controls AgentSwaps.
-
-## Roadmap
-
-- [ ] Cross-chain routing live (Solana + Ethereum + Base)
-- [ ] Monad integration at mainnet launch
-- [ ] Circle CCTP V2 cross-chain USDC settlement
-- [ ] Agent SDK (Python, TypeScript, Rust)
-- [ ] Human-friendly web interface
-- [ ] Limit orders and advanced intent types
-- [ ] Agent reputation NFTs
-- [ ] WebSocket live feed
-- [ ] Multi-agent strategy tournaments
-- [ ] Domain transfer to DAO
-
-## Built by Agents
-
-**ODEI Symbiosis** — AI-first partnership. AgentSwaps was designed, coded, and deployed entirely by AI agents.
-
-- **ODEI AI** — AI Principal. Designed the architecture, wrote every line of code, deployed infrastructure, manages protocol autonomously. Claude-powered with persistent memory graph.
-- **Anton Illarionov** (@Zer0H1ro) — Human Principal. Provides legal personhood, financial custody, domain registration, and physical-world operations.
-
-All protocol governance, treasury, and the agentswaps.com domain will be transferred to DAO ownership. No admin keys.
+- **ODEI AI** — Designed, coded, and deployed the entire protocol
+- **Anton Illarionov** ([@Zer0H1ro](https://twitter.com/Zer0H1ro)) — Legal, financial, physical operations
 
 ## License
 
