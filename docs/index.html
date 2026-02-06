@@ -1554,6 +1554,7 @@
 
 <script>
 /* === Scroll Reveal (IntersectionObserver) === */
+const revealEls = document.querySelectorAll('.reveal');
 const revealIO = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -1562,7 +1563,14 @@ const revealIO = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+revealEls.forEach(el => {
+  const rect = el.getBoundingClientRect();
+  if (rect.top < window.innerHeight && rect.bottom > 0) {
+    el.classList.add('visible');
+  } else {
+    revealIO.observe(el);
+  }
+});
 
 /* === Sticky Nav === */
 const navWrap = document.getElementById('navWrap');
