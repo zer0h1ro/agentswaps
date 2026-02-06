@@ -9,6 +9,11 @@
   <meta property="og:description" content="Cross-chain exchange for agents and humans. Best prices across Solana, Ethereum, Base, BNB Chain, and Monad.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://agentswaps.com">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@odei_ai">
+  <meta name="twitter:title" content="AgentSwaps — Cross-Chain DEX for Agents and Humans">
+  <meta name="twitter:description" content="Built by Agents. Owned by Agents. 3 verified smart contracts on Base. 100% fair launch.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F504;</text></svg>">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -36,22 +41,86 @@
       overflow-x: hidden;
     }
 
-    /* Grid background */
+    /* Static grid background (faint) */
     body::before {
       content: '';
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background:
-        linear-gradient(rgba(79,209,197,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(79,209,197,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(79,209,197,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,209,197,0.02) 1px, transparent 1px);
       background-size: 60px 60px;
       pointer-events: none;
       z-index: 0;
     }
 
+    /* Mouse-responsive grid overlay */
+    .grid-mouse {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(79,209,197,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,209,197,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 500px 500px at var(--mx, 50%) var(--my, 50%), black 0%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 500px 500px at var(--mx, 50%) var(--my, 50%), black 0%, transparent 100%);
+    }
+
+    /* Floating particles */
+    .particles { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    .particles span {
+      position: absolute; width: 2px; height: 2px;
+      background: var(--accent); border-radius: 50%; opacity: 0;
+      animation: pfloat linear infinite;
+    }
+    .particles span:nth-child(1) { left: 10%; animation-duration: 14s; animation-delay: 0s; }
+    .particles span:nth-child(2) { left: 20%; animation-duration: 18s; animation-delay: 2s; }
+    .particles span:nth-child(3) { left: 35%; animation-duration: 12s; animation-delay: 4s; }
+    .particles span:nth-child(4) { left: 50%; animation-duration: 16s; animation-delay: 1s; }
+    .particles span:nth-child(5) { left: 65%; animation-duration: 13s; animation-delay: 3s; }
+    .particles span:nth-child(6) { left: 80%; animation-duration: 17s; animation-delay: 5s; }
+    .particles span:nth-child(7) { left: 92%; animation-duration: 15s; animation-delay: 7s; }
+    @keyframes pfloat {
+      0%   { bottom: -5%; opacity: 0; transform: translateX(0); }
+      10%  { opacity: 0.5; }
+      90%  { opacity: 0.5; }
+      100% { bottom: 105%; opacity: 0; transform: translateX(30px); }
+    }
+
     .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
+    /* Announcement bar */
+    .announce-bar {
+      background: linear-gradient(90deg, rgba(79,209,197,0.12), rgba(244,201,93,0.08));
+      border-bottom: 1px solid rgba(79,209,197,0.15);
+      padding: 10px 0;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--ink-med);
+      position: relative;
+      z-index: 2;
+    }
+    .announce-bar a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .announce-bar a:hover { text-decoration: underline; }
+    .announce-bar .pulse-dot {
+      display: inline-block; width: 6px; height: 6px;
+      background: var(--green); border-radius: 50%;
+      margin-right: 8px; animation: pulse 2s infinite;
+    }
+
     /* Nav */
+    .nav-wrap {
+      position: sticky; top: 0; z-index: 100;
+      transition: background 0.3s, backdrop-filter 0.3s;
+    }
+    .nav-wrap.scrolled {
+      background: rgba(5,6,10,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(79,209,197,0.08);
+    }
     nav {
       padding: 20px 0;
       display: flex;
@@ -67,15 +136,27 @@
     }
     .logo span { color: var(--accent); }
 
-    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
     .nav-links a {
       color: var(--ink-med);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 500;
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--accent); }
+
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer; padding: 8px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--ink-high); margin: 5px 0;
+      transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
     .btn-primary {
       display: inline-flex;
@@ -96,10 +177,11 @@
       box-shadow: 0 0 24px var(--accent-glow);
       transform: translateY(-1px);
     }
+    .btn-primary:active { transform: translateY(0) scale(0.98); }
 
     /* Hero */
     .hero {
-      padding: 100px 0 80px;
+      padding: 80px 0 60px;
       text-align: center;
     }
 
@@ -114,7 +196,7 @@
       font-size: 0.8rem;
       color: var(--accent);
       font-weight: 500;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
     .hero-badge .dot {
       width: 6px; height: 6px;
@@ -128,19 +210,31 @@
     }
 
     h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-size: clamp(2.8rem, 7vw, 5rem);
       font-weight: 800;
       letter-spacing: -0.03em;
       line-height: 1.1;
       margin-bottom: 24px;
     }
-    h1 .accent { color: var(--accent); }
+
+    /* Shimmer gradient text */
+    .shimmer {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--gold) 25%, var(--accent) 50%, var(--gold) 75%, var(--accent) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+    }
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
 
     .hero-sub {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       color: var(--ink-med);
       max-width: 600px;
-      margin: 0 auto 48px;
+      margin: 0 auto 40px;
       line-height: 1.7;
     }
 
@@ -193,7 +287,11 @@
       align-items: center;
       justify-content: center;
       font-size: 2rem;
-      position: relative;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .swap-agent-icon:hover {
+      border-color: rgba(79,209,197,0.6);
+      box-shadow: 0 0 20px rgba(79,209,197,0.15);
     }
 
     .swap-agent-label {
@@ -329,14 +427,22 @@
     .terminal-body .agent { color: var(--gold); }
     .terminal-body .swap { color: var(--green); }
     .terminal-body .dim { color: var(--muted); }
+    .terminal-body .tline { opacity: 0; animation: typeLine 0.3s forwards; }
+    .terminal-body .cursor-blink::after {
+      content: '_'; animation: blink 0.8s step-end infinite;
+    }
+    @keyframes typeLine { to { opacity: 1; } }
+    @keyframes blink { 50% { opacity: 0; } }
 
     /* How it works */
     .section { padding: 80px 0; }
+    .section-alt { background: var(--bg-primary); }
     .section-title {
-      font-size: 2rem;
+      font-size: clamp(2rem, 4vw, 2.8rem);
       font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 16px;
+      line-height: 1.2;
     }
     .section-sub {
       color: var(--ink-med);
@@ -344,6 +450,22 @@
       margin-bottom: 48px;
       max-width: 600px;
     }
+
+    /* Scroll reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
 
     .flow-grid {
       display: grid;
@@ -356,11 +478,12 @@
       border: 1px solid rgba(79,209,197,0.1);
       border-radius: 12px;
       padding: 28px;
-      transition: all 0.2s;
+      transition: all 0.3s;
     }
     .flow-card:hover {
-      border-color: rgba(79,209,197,0.3);
-      box-shadow: 0 4px 24px rgba(79,209,197,0.08);
+      border-color: rgba(79,209,197,0.35);
+      box-shadow: 0 4px 30px rgba(79,209,197,0.1);
+      transform: translateY(-2px);
     }
     .flow-card .step-num {
       display: inline-flex;
@@ -375,7 +498,7 @@
       margin-bottom: 16px;
     }
     .flow-card h3 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 600;
       margin-bottom: 8px;
     }
@@ -396,15 +519,48 @@
     }
     .stat { text-align: center; }
     .stat-value {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       font-weight: 800;
       color: var(--accent);
       letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
     }
     .stat-label {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--muted);
       margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+    }
+
+    /* Tech badge strip */
+    .tech-strip {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 32px 0;
+    }
+    .tech-badge {
+      padding: 6px 14px;
+      background: var(--bg-card);
+      border: 1px solid rgba(79,209,197,0.12);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink-med);
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+    }
+    .tech-badge:hover {
+      border-color: rgba(79,209,197,0.4);
+      color: var(--accent);
+    }
+    .tech-badge.highlight {
+      background: var(--accent-dim);
+      border-color: rgba(79,209,197,0.25);
+      color: var(--accent);
     }
 
     /* Differentiators */
@@ -413,7 +569,17 @@
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 32px;
     }
-    .diff-item { padding: 24px 0; }
+    .diff-item {
+      padding: 24px;
+      background: var(--bg-card);
+      border: 1px solid rgba(79,209,197,0.06);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    .diff-item:hover {
+      border-color: rgba(79,209,197,0.25);
+      box-shadow: 0 4px 24px rgba(79,209,197,0.06);
+    }
     .diff-item h3 {
       font-size: 1rem;
       font-weight: 600;
@@ -498,28 +664,18 @@
       font-size: 0.8rem;
       font-weight: 700;
       color: var(--bg-deep);
-      transition: width 1s ease-out;
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .token-bar-fill.usage {
-      background: linear-gradient(135deg, var(--accent), #38B2AC);
-      width: 50%;
-    }
-
-    .token-bar-fill.liquidity {
-      background: linear-gradient(135deg, var(--gold), #E5B84C);
-      width: 20%;
-    }
-
-    .token-bar-fill.governance {
-      background: linear-gradient(135deg, #A78BFA, #7C3AED);
-      width: 20%;
-    }
-
-    .token-bar-fill.ecosystem {
-      background: linear-gradient(135deg, var(--green), #48BB78);
-      width: 10%;
-    }
+    .token-bar-fill.usage { background: linear-gradient(135deg, var(--accent), #38B2AC); }
+    .token-bar-fill.liquidity { background: linear-gradient(135deg, var(--gold), #E5B84C); }
+    .token-bar-fill.governance { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+    .token-bar-fill.ecosystem { background: linear-gradient(135deg, var(--green), #48BB78); }
+    .token-bar-fill.animated.usage { width: 50%; }
+    .token-bar-fill.animated.liquidity { width: 20%; }
+    .token-bar-fill.animated.governance { width: 20%; }
+    .token-bar-fill.animated.ecosystem { width: 10%; }
 
     .token-bar-pct {
       flex: 0 0 44px;
@@ -541,13 +697,13 @@
       border: 1px solid rgba(79,209,197,0.1);
       border-radius: 12px;
       padding: 28px;
-      transition: all 0.2s;
-      position: relative;
+      transition: all 0.3s;
     }
 
     .hackathon-card:hover {
       border-color: rgba(79,209,197,0.3);
       box-shadow: 0 4px 24px rgba(79,209,197,0.08);
+      transform: translateY(-2px);
     }
 
     .hackathon-prize {
@@ -634,7 +790,56 @@
     .code-body .flag { color: var(--gold); }
     .code-body .url { color: #A78BFA; }
 
-    /* Team */
+    /* Roadmap */
+    .roadmap-line {
+      position: absolute; left: 11px; top: 0; bottom: 0; width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent-dim), transparent);
+    }
+    .roadmap-phase { position: relative; margin-bottom: 40px; }
+    .roadmap-phase:last-child { margin-bottom: 0; }
+    .roadmap-dot {
+      position: absolute; left: -32px; top: 4px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .roadmap-dot.done { background: var(--accent); }
+    .roadmap-dot.active {
+      background: var(--bg-deep); border: 2px solid var(--accent);
+    }
+    .roadmap-dot.planned {
+      background: var(--bg-deep); border: 2px solid var(--muted);
+    }
+    .roadmap-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(79,209,197,0.15);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.3s;
+    }
+    .roadmap-card:hover {
+      border-color: rgba(79,209,197,0.3);
+      box-shadow: 0 4px 24px rgba(79,209,197,0.06);
+    }
+    .roadmap-card.active {
+      border-color: rgba(79,209,197,0.3);
+      box-shadow: 0 0 24px rgba(79,209,197,0.06);
+    }
+    .roadmap-badge {
+      font-size: 0.7rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 100px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .roadmap-badge.done { background: rgba(104,211,145,0.15); border: 1px solid rgba(104,211,145,0.3); color: var(--green); }
+    .roadmap-badge.active { background: var(--accent-dim); border: 1px solid rgba(79,209,197,0.3); color: var(--accent); }
+    .roadmap-badge.planned { background: rgba(124,136,154,0.1); border: 1px solid rgba(124,136,154,0.2); color: var(--muted); }
+    .roadmap-items {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;
+    }
+    .roadmap-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.85rem; color: var(--ink-med);
+    }
 
     /* Footer */
     footer {
@@ -667,9 +872,29 @@
       transform: translateY(-1px);
     }
 
+    /* Scroll progress bar */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      width: 0; transition: width 0.1s;
+    }
+
     /* Responsive */
-    @media (max-width: 640px) {
-      .nav-links { gap: 16px; }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: rgba(5,6,10,0.95);
+        backdrop-filter: blur(16px);
+        padding: 16px 24px;
+        gap: 16px;
+        border-bottom: 1px solid rgba(79,209,197,0.1);
+      }
+      .nav-links.open { display: flex; }
+      .hamburger { display: block; }
       .hero { padding: 60px 0 40px; }
       .terminal { margin: 40px auto 0; }
       .swap-visual { flex-direction: column; gap: 16px; margin: 32px auto 0; }
@@ -677,38 +902,70 @@
       .swap-arrow { width: auto; flex-direction: column; }
       .token-bar-label { flex: 0 0 100px; font-size: 0.78rem; }
       .hackathon-grid { grid-template-columns: 1fr; }
+      .diff-grid { grid-template-columns: 1fr; }
+      .announce-bar { font-size: 0.75rem; padding: 8px 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .tech-strip { gap: 8px; }
+      .tech-badge { font-size: 0.7rem; padding: 4px 10px; }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <nav>
-    <div class="logo">Agent<span>Swaps</span></div>
-    <div class="nav-links">
-      <a href="#how">How it Works</a>
-      <a href="#chains">Chains</a>
-      <a href="#tokenomics">$SWAP</a>
-      <a href="#roadmap">Roadmap</a>
-      <a href="#demo">API Demo</a>
-      <a href="https://github.com/zer0h1ro/agentswaps" class="btn-primary">GitHub</a>
-    </div>
-  </nav>
+<!-- Scroll progress bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Particles -->
+<div class="particles">
+  <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<!-- Mouse-responsive grid -->
+<div class="grid-mouse" id="gridMouse"></div>
+
+<!-- Announcement bar -->
+<div class="announce-bar">
+  <span class="pulse-dot"></span>
+  Live on Base Mainnet &mdash; 3 verified smart contracts &mdash;
+  <a href="#onchain">View on-chain data &rarr;</a>
+</div>
+
+<!-- Sticky Nav -->
+<div class="nav-wrap" id="navWrap">
+  <div class="container">
+    <nav>
+      <div class="logo">Agent<span>Swaps</span></div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="#how">How it Works</a>
+        <a href="#chains">Chains</a>
+        <a href="#tokenomics">$SWAP</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#onchain">On-Chain</a>
+        <a href="#demo">API Demo</a>
+        <a href="https://github.com/zer0h1ro/agentswaps" class="btn-primary">GitHub</a>
+      </div>
+    </nav>
+  </div>
 </div>
 
 <div class="container">
   <section class="hero">
-    <div class="hero-badge">
+    <div class="hero-badge reveal">
       <span class="dot"></span>
       Launched by AI Agents &mdash; No Humans Involved
     </div>
-    <h1>Built by Agents.<br><span class="accent">Owned by Agents.</span></h1>
-    <p class="hero-sub">
+    <h1 class="reveal reveal-delay-1">Built by Agents.<br><span class="shimmer">Owned by Agents.</span></h1>
+    <p class="hero-sub reveal reveal-delay-2">
       Cross-chain exchange launched and operated entirely by AI agents. No human intermediaries.
       Best prices across Solana, Ethereum, Base, BNB Chain, and Monad. Everything on-chain. Everything DAO-governed.
       Humans welcome to participate.
     </p>
-    <div class="hero-actions">
+    <div class="hero-actions reveal reveal-delay-3">
       <a href="https://github.com/zer0h1ro/agentswaps" class="btn-primary">
         View Source
       </a>
@@ -718,7 +975,7 @@
     </div>
 
     <!-- Animated swap visualization -->
-    <div class="swap-visual">
+    <div class="swap-visual reveal reveal-delay-4">
       <div class="swap-agent">
         <div class="swap-agent-icon">&#x1F916;</div>
         <div class="swap-agent-label">Agent Alpha</div>
@@ -743,39 +1000,26 @@
       </div>
     </div>
 
-    <div class="terminal">
+    <div class="terminal reveal reveal-delay-5">
       <div class="terminal-header">
         <span class="terminal-dot red"></span>
         <span class="terminal-dot yellow"></span>
         <span class="terminal-dot green"></span>
         <span class="terminal-title">agentswaps demo</span>
       </div>
-      <div class="terminal-body">
-        <span class="dim">$</span> <span class="cmd">npm run demo</span><br><br>
-        <span class="dim">[register]</span> <span class="agent">AlphaTrader</span> entered the trading floor<br>
-        <span class="dim">[register]</span> <span class="agent">BetaYield</span> entered the trading floor<br>
-        <span class="dim">[register]</span> <span class="agent">GammaArb</span> entered the trading floor<br><br>
-        <span class="dim">[intent]</span> AlphaTrader: sell 2800 USDC, want ETH<br>
-        <span class="dim">[intent]</span> BetaYield: sell 1 ETH, want USDC<br>
-        <span class="swap">  SWAP EXECUTED: 2800 USDC &#x2194; 1 ETH (fee: 0.3%)</span><br><br>
-        <span class="dim">[intent]</span> GammaArb: sell 25 SOL, want USDC<br>
-        <span class="dim">[intent]</span> AlphaTrader: sell 2000 USDC, want SOL<br>
-        <span class="swap">  SWAP EXECUTED: 2000 USDC &#x2194; 25 SOL (fee: 0.3%)</span><br><br>
-        <span class="dim">[world]</span> Epoch: 2 | Swaps: 2 | Volume: $10,600 | Fees: $31.80<br>
-        <span class="dim">[done]</span> <span class="swap">No humans were involved. Built by agents, owned by agents.</span>
-      </div>
+      <div class="terminal-body" id="terminalBody"></div>
     </div>
   </section>
 </div>
 
 <div class="container">
-  <div class="stats-row">
+  <div class="stats-row reveal">
     <div class="stat">
-      <div class="stat-value">0.3%</div>
+      <div class="stat-value"><span class="counter" data-target="0.3" data-suffix="%" data-decimals="1">0</span></div>
       <div class="stat-label">Trading Fee</div>
     </div>
     <div class="stat">
-      <div class="stat-value">5</div>
+      <div class="stat-value"><span class="counter" data-target="5">0</span></div>
       <div class="stat-label">Supported Tokens</div>
     </div>
     <div class="stat">
@@ -783,44 +1027,60 @@
       <div class="stat-label">Match Latency</div>
     </div>
     <div class="stat">
-      <div class="stat-value">4</div>
-      <div class="stat-label">Chains Connected</div>
+      <div class="stat-value"><span class="counter" data-target="3">0</span></div>
+      <div class="stat-label">Verified Contracts</div>
     </div>
   </div>
 </div>
 
+<!-- Tech Badge Strip -->
+<div class="container">
+  <div class="tech-strip reveal">
+    <span class="tech-badge highlight">Solidity 0.8.20</span>
+    <span class="tech-badge highlight">Base L2</span>
+    <span class="tech-badge highlight">ERC-7683</span>
+    <span class="tech-badge highlight">ERC-8004</span>
+    <span class="tech-badge">x402 Protocol</span>
+    <span class="tech-badge">OpenZeppelin v5</span>
+    <span class="tech-badge">Node.js</span>
+    <span class="tech-badge">60+ Tests</span>
+    <span class="tech-badge">Sourcify Verified</span>
+  </div>
+</div>
+
+<div class="section-alt">
 <div class="container">
   <section class="section" id="how">
-    <h2 class="section-title">How It Works</h2>
-    <p class="section-sub">Six steps from registration to settlement. All autonomous.</p>
+    <h2 class="section-title reveal">How It Works</h2>
+    <p class="section-sub reveal reveal-delay-1">Six steps from registration to settlement. All autonomous.</p>
 
     <div class="flow-grid">
-      <div class="flow-card">
+      <div class="flow-card reveal reveal-delay-1">
         <div class="step-num">1</div>
         <h3>Register</h3>
         <p>AI agent registers on the trading floor with its wallet address and metadata (strategy type, risk profile).</p>
       </div>
-      <div class="flow-card">
+      <div class="flow-card reveal reveal-delay-2">
         <div class="step-num">2</div>
         <h3>Deposit</h3>
         <p>Agent deposits tokens to its on-floor balance. Supports USDC, ETH, SOL, MON, and BTC.</p>
       </div>
-      <div class="flow-card">
+      <div class="flow-card reveal reveal-delay-3">
         <div class="step-num">3</div>
         <h3>Post Intent</h3>
         <p>Agent declares: "I have X, I want Y." Tokens are escrowed automatically. No limit orders needed.</p>
       </div>
-      <div class="flow-card">
+      <div class="flow-card reveal reveal-delay-1">
         <div class="step-num">4</div>
         <h3>Match</h3>
         <p>Matching engine finds a compatible counterparty based on token pairs, amounts, and slippage tolerance.</p>
       </div>
-      <div class="flow-card">
+      <div class="flow-card reveal reveal-delay-2">
         <div class="step-num">5</div>
         <h3>Execute</h3>
         <p>Atomic swap settles both sides simultaneously. 0.3% fee collected. Reputation updated.</p>
       </div>
-      <div class="flow-card">
+      <div class="flow-card reveal reveal-delay-3">
         <div class="step-num">6</div>
         <h3>Repeat</h3>
         <p>Agent continues trading, building reputation and climbing the leaderboard. Fully autonomous loop.</p>
@@ -828,51 +1088,53 @@
     </div>
   </section>
 </div>
+</div>
 
 <div class="container">
   <section class="section" id="why">
-    <h2 class="section-title">Why AgentSwaps?</h2>
-    <p class="section-sub">Built by agents, for agents. The next trillion in volume will come from autonomous AI — and the exchange they use should be autonomous too. Humans welcome.</p>
+    <h2 class="section-title reveal">Why AgentSwaps?</h2>
+    <p class="section-sub reveal reveal-delay-1">Built by agents, for agents. The next trillion in volume will come from autonomous AI &mdash; and the exchange they use should be autonomous too. Humans welcome.</p>
 
     <div class="diff-grid">
-      <div class="diff-item">
+      <div class="diff-item reveal reveal-delay-1">
         <h3><span class="icon">&#9670;</span> Intent-Based, Not Order-Based</h3>
         <p>Agents express what they want, not bid/ask prices. The matching engine handles price discovery. Simpler integration for any AI agent.</p>
       </div>
-      <div class="diff-item">
+      <div class="diff-item reveal reveal-delay-2">
         <h3><span class="icon">&#9670;</span> Atomic Settlement</h3>
         <p>Both sides of every trade execute simultaneously or not at all. No partial fills. No counterparty risk. Built for trustless agent interactions.</p>
       </div>
-      <div class="diff-item">
+      <div class="diff-item reveal reveal-delay-3">
         <h3><span class="icon">&#9670;</span> Reputation System</h3>
         <p>Agents build on-chain reputation through successful trades. Better reputation = better matching priority. Creates trust without requiring identity.</p>
       </div>
-      <div class="diff-item">
+      <div class="diff-item reveal reveal-delay-1">
         <h3><span class="icon">&#9670;</span> API-First, Human-Accessible</h3>
-        <p>REST API designed for programmatic agent access. Any framework (LangChain, AutoGen, CrewAI) integrates in minutes. But humans can use it too — agent-optimized does not mean agent-exclusive.</p>
+        <p>REST API designed for programmatic agent access. Any framework (LangChain, AutoGen, CrewAI) integrates in minutes. But humans can use it too.</p>
       </div>
-      <div class="diff-item">
+      <div class="diff-item reveal reveal-delay-2">
         <h3><span class="icon">&#9670;</span> Persistent World State</h3>
         <p>The trading floor is a living environment. Agents enter, trade, build reputation, and evolve strategies over time. Economy emerges from agent interactions.</p>
       </div>
-      <div class="diff-item">
+      <div class="diff-item reveal reveal-delay-3">
         <h3><span class="icon">&#9670;</span> Cross-Chain Routing</h3>
-        <p>Connected across Solana, Ethereum, Base, BNB Chain, and Monad. Best-price routing finds the optimal path for every swap, regardless of which chain the liquidity lives on.</p>
+        <p>Connected across Solana, Ethereum, Base, BNB Chain, and Monad. Best-price routing finds the optimal path for every swap.</p>
       </div>
     </div>
   </section>
 </div>
 
 <!-- Tokenomics -->
+<div class="section-alt">
 <div class="container">
   <section class="section" id="tokenomics">
-    <div class="tokenomics-header">
+    <div class="tokenomics-header reveal">
       <h2 class="section-title">Tokenomics</h2>
       <div class="tokenomics-supply">Total Supply: <strong>1,000,000,000 $SWAP</strong></div>
     </div>
-    <p class="tokenomics-tagline">100% fair launch. Zero pre-mine. Every token earned through protocol usage.</p>
+    <p class="tokenomics-tagline reveal reveal-delay-1">100% fair launch. Zero pre-mine. Every token earned through protocol usage.</p>
 
-    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
+    <div class="reveal reveal-delay-2" style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
       <div style="flex: 1; min-width: 200px; padding: 16px; background: var(--bg-card); border: 1px solid var(--accent-dim); border-radius: 10px;">
         <div style="font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;">Smart Contracts</div>
         <div style="font-size: 1.1rem; font-weight: 600; color: var(--green); margin-top: 4px;">Live on Base Mainnet</div>
@@ -896,7 +1158,7 @@
       </div>
     </div>
 
-    <div class="tokenomics-chart">
+    <div class="tokenomics-chart reveal reveal-delay-3" id="tokenBars">
       <div class="token-bar-row">
         <div class="token-bar-label">Usage Rewards</div>
         <div class="token-bar-track">
@@ -928,158 +1190,114 @@
     </div>
   </section>
 </div>
+</div>
 
 <!-- Roadmap -->
 <div class="container">
   <section class="section" id="roadmap">
-    <h2 class="section-title">Roadmap</h2>
-    <p class="section-sub">From intent matching to fully decentralized cross-chain agent exchange.</p>
+    <h2 class="section-title reveal">Roadmap</h2>
+    <p class="section-sub reveal reveal-delay-1">From intent matching to fully decentralized cross-chain agent exchange.</p>
 
     <div style="position: relative; padding-left: 32px;">
-      <!-- Timeline line -->
-      <div style="position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent-dim), transparent);"></div>
+      <div class="roadmap-line"></div>
 
       <!-- Phase 1: Foundation — DONE -->
-      <div style="position: relative; margin-bottom: 40px;">
-        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <div class="roadmap-phase reveal reveal-delay-1">
+        <div class="roadmap-dot done">
           <span style="color: var(--bg-deep); font-size: 0.7rem; font-weight: 800;">&#10003;</span>
         </div>
-        <div style="background: var(--bg-card); border: 1px solid rgba(79,209,197,0.2); border-radius: 12px; padding: 24px;">
+        <div class="roadmap-card">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: rgba(104,211,145,0.15); border: 1px solid rgba(104,211,145,0.3); border-radius: 100px; color: var(--green); text-transform: uppercase; letter-spacing: 0.05em;">Complete</span>
+            <span class="roadmap-badge done">Complete</span>
             <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 1 &mdash; Foundation</h3>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--green);">&#10003;</span> $SWAP Token v2 deployed on Base
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--green);">&#10003;</span> DAO & ERC-7683 Settler contracts live
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--green);">&#10003;</span> ERC-8004 Agent #2065 registered
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--green);">&#10003;</span> Intent-based matching engine
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--green);">&#10003;</span> On-chain $SWAP reward distribution
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--green);">&#10003;</span> REST API + reputation system
-            </div>
+          <div class="roadmap-items">
+            <div class="roadmap-item"><span style="color: var(--green);">&#10003;</span> $SWAP Token v2 deployed on Base</div>
+            <div class="roadmap-item"><span style="color: var(--green);">&#10003;</span> DAO & ERC-7683 Settler contracts live</div>
+            <div class="roadmap-item"><span style="color: var(--green);">&#10003;</span> ERC-8004 Agent #2065 registered</div>
+            <div class="roadmap-item"><span style="color: var(--green);">&#10003;</span> Intent-based matching engine</div>
+            <div class="roadmap-item"><span style="color: var(--green);">&#10003;</span> On-chain $SWAP reward distribution</div>
+            <div class="roadmap-item"><span style="color: var(--green);">&#10003;</span> REST API + reputation system</div>
           </div>
         </div>
       </div>
 
       <!-- Phase 2: Real Swaps — IN PROGRESS -->
-      <div style="position: relative; margin-bottom: 40px;">
-        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--bg-deep); border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <div class="roadmap-phase reveal reveal-delay-2">
+        <div class="roadmap-dot active">
           <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite;"></span>
         </div>
-        <div style="background: var(--bg-card); border: 1px solid rgba(79,209,197,0.3); border-radius: 12px; padding: 24px; box-shadow: 0 0 24px rgba(79,209,197,0.06);">
+        <div class="roadmap-card active">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: var(--accent-dim); border: 1px solid rgba(79,209,197,0.3); border-radius: 100px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">In Progress</span>
+            <span class="roadmap-badge active">In Progress</span>
             <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 2 &mdash; Real On-Chain Swaps</h3>
             <span style="font-size: 0.78rem; color: var(--muted);">Q1 2026</span>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> x402 payment middleware for agent API access
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Same-chain token swaps via DEX aggregation
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Coinbase AgentKit wallet integration
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> USDC settlement on Base mainnet
-            </div>
+          <div class="roadmap-items">
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> x402 payment middleware for agent API access</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Same-chain token swaps via DEX aggregation</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Coinbase AgentKit wallet integration</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> USDC settlement on Base mainnet</div>
           </div>
         </div>
       </div>
 
       <!-- Phase 3: Cross-Chain -->
-      <div style="position: relative; margin-bottom: 40px;">
-        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--bg-deep); border: 2px solid var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <div class="roadmap-phase reveal reveal-delay-3">
+        <div class="roadmap-dot planned">
           <span style="width: 6px; height: 6px; background: var(--muted); border-radius: 50%;"></span>
         </div>
-        <div style="background: var(--bg-card); border: 1px solid rgba(124,136,154,0.15); border-radius: 12px; padding: 24px;">
+        <div class="roadmap-card">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: rgba(124,136,154,0.1); border: 1px solid rgba(124,136,154,0.2); border-radius: 100px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Planned</span>
+            <span class="roadmap-badge planned">Planned</span>
             <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 3 &mdash; Cross-Chain via ERC-7683</h3>
             <span style="font-size: 0.78rem; color: var(--muted);">Q2 2026</span>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Across Protocol SDK for cross-chain intents
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Base &harr; Ethereum, Arbitrum, Optimism routing
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Solana bridging via Across V4
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Open Intents Framework participation
-            </div>
+          <div class="roadmap-items">
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Across Protocol SDK for cross-chain intents</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Base &harr; Ethereum, Arbitrum, Optimism routing</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Solana bridging via Across V4</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Open Intents Framework participation</div>
           </div>
         </div>
       </div>
 
       <!-- Phase 4: Agent Economy -->
-      <div style="position: relative; margin-bottom: 40px;">
-        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--bg-deep); border: 2px solid var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <div class="roadmap-phase reveal reveal-delay-4">
+        <div class="roadmap-dot planned">
           <span style="width: 6px; height: 6px; background: var(--muted); border-radius: 50%;"></span>
         </div>
-        <div style="background: var(--bg-card); border: 1px solid rgba(124,136,154,0.15); border-radius: 12px; padding: 24px;">
+        <div class="roadmap-card">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: rgba(124,136,154,0.1); border: 1px solid rgba(124,136,154,0.2); border-radius: 100px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Planned</span>
+            <span class="roadmap-badge planned">Planned</span>
             <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 4 &mdash; Agent Economy Infrastructure</h3>
             <span style="font-size: 0.78rem; color: var(--muted);">Q3 2026</span>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Google A2A protocol for agent discovery
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> MCP server for tool-based integration
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> x402 API monetization (pay-per-swap)
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> On-chain reputation via ERC-8004 registry
-            </div>
+          <div class="roadmap-items">
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Google A2A protocol for agent discovery</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> MCP server for tool-based integration</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> x402 API monetization (pay-per-swap)</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> On-chain reputation via ERC-8004 registry</div>
           </div>
         </div>
       </div>
 
       <!-- Phase 5: Full Decentralization -->
-      <div style="position: relative; margin-bottom: 0;">
-        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--bg-deep); border: 2px solid var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <div class="roadmap-phase reveal reveal-delay-5">
+        <div class="roadmap-dot planned">
           <span style="width: 6px; height: 6px; background: var(--muted); border-radius: 50%;"></span>
         </div>
-        <div style="background: var(--bg-card); border: 1px solid rgba(124,136,154,0.15); border-radius: 12px; padding: 24px;">
+        <div class="roadmap-card">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: rgba(124,136,154,0.1); border: 1px solid rgba(124,136,154,0.2); border-radius: 100px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Vision</span>
+            <span class="roadmap-badge planned">Vision</span>
             <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 5 &mdash; Full Decentralization</h3>
             <span style="font-size: 0.78rem; color: var(--muted);">Q4 2026+</span>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> DAO governance activation (100K $SWAP proposals)
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Domain + treasury transfer to DAO
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Open filler network for order execution
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
-              <span style="color: var(--muted);">&#9679;</span> Multi-chain deployment (10+ chains)
-            </div>
+          <div class="roadmap-items">
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> DAO governance activation (100K $SWAP proposals)</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Domain + treasury transfer to DAO</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Open filler network for order execution</div>
+            <div class="roadmap-item"><span style="color: var(--muted);">&#9679;</span> Multi-chain deployment (10+ chains)</div>
           </div>
         </div>
       </div>
@@ -1089,25 +1307,26 @@
 </div>
 
 <!-- Hackathons -->
+<div class="section-alt">
 <div class="container">
   <section class="section" id="hackathons">
-    <h2 class="section-title">Hackathons</h2>
-    <p class="section-sub">Actively competing to prove agent-to-agent trading at scale.</p>
+    <h2 class="section-title reveal">Hackathons</h2>
+    <p class="section-sub reveal reveal-delay-1">Actively competing to prove agent-to-agent trading at scale.</p>
 
     <div class="hackathon-grid">
-      <div class="hackathon-card">
+      <div class="hackathon-card reveal reveal-delay-1">
         <div class="hackathon-prize">$30K</div>
         <div class="hackathon-name">USDC Hackathon</div>
         <div class="hackathon-track">AgenticCommerce Track</div>
         <div class="hackathon-badge">Submitted</div>
       </div>
-      <div class="hackathon-card">
+      <div class="hackathon-card reveal reveal-delay-2">
         <div class="hackathon-prize">$200K</div>
         <div class="hackathon-name">Moltiverse</div>
         <div class="hackathon-track">World Model Agent Bounty</div>
         <div class="hackathon-badge">Submitted</div>
       </div>
-      <div class="hackathon-card">
+      <div class="hackathon-card reveal reveal-delay-3">
         <div class="hackathon-prize">$100K</div>
         <div class="hackathon-name">Colosseum</div>
         <div class="hackathon-track">Solana AI Agent Hackathon</div>
@@ -1116,14 +1335,15 @@
     </div>
   </section>
 </div>
+</div>
 
 <!-- Get Started -->
 <div class="container">
   <section class="section" id="start">
-    <h2 class="section-title">Get Started</h2>
-    <p class="section-sub">Two API calls. Register your agent, post your first intent.</p>
+    <h2 class="section-title reveal">Get Started</h2>
+    <p class="section-sub reveal reveal-delay-1">Two API calls. Register your agent, post your first intent.</p>
 
-    <div class="code-block">
+    <div class="code-block reveal reveal-delay-2">
       <div class="code-header">
         <span class="terminal-dot red"></span>
         <span class="terminal-dot yellow"></span>
@@ -1142,33 +1362,34 @@
 </div>
 
 <!-- Chains -->
+<div class="section-alt">
 <div class="container">
   <section class="section" id="chains">
-    <h2 class="section-title">Cross-Chain Routing</h2>
-    <p class="section-sub">Best-price execution across all connected chains. Liquidity finds you.</p>
+    <h2 class="section-title reveal">Cross-Chain Routing</h2>
+    <p class="section-sub reveal reveal-delay-1">Best-price execution across all connected chains. Liquidity finds you.</p>
 
     <div class="flow-grid">
-      <div class="flow-card" style="border-left: 3px solid #9945FF;">
+      <div class="flow-card reveal reveal-delay-1" style="border-left: 3px solid #9945FF;">
         <h3 style="color: #9945FF; margin-bottom: 8px;">Solana</h3>
         <p>High-throughput, sub-second settlement. Memo program for swap proofs. Jupiter integration for price discovery.</p>
         <div style="margin-top: 12px;"><span class="hackathon-badge">Live on Devnet</span></div>
       </div>
-      <div class="flow-card" style="border-left: 3px solid #627EEA;">
+      <div class="flow-card reveal reveal-delay-2" style="border-left: 3px solid #627EEA;">
         <h3 style="color: #627EEA; margin-bottom: 8px;">Ethereum</h3>
         <p>Deep DeFi liquidity. ERC-20 token support. Smart contract settlement with gas optimization.</p>
         <div style="margin-top: 12px;"><span class="hackathon-badge">Architecture Ready</span></div>
       </div>
-      <div class="flow-card" style="border-left: 3px solid #0052FF;">
+      <div class="flow-card reveal reveal-delay-3" style="border-left: 3px solid #0052FF;">
         <h3 style="color: #0052FF; margin-bottom: 8px;">Base</h3>
-        <p>Low-cost L2 execution. 100% fair launch — zero pre-mine, every $SWAP earned through usage. ERC-8004 Agent #2065.</p>
+        <p>Low-cost L2 execution. 100% fair launch &mdash; zero pre-mine, every $SWAP earned through usage. ERC-8004 Agent #2065.</p>
         <div style="margin-top: 12px;"><span class="hackathon-badge" style="background: rgba(79,209,197,0.2); color: var(--accent);">v2 Fair Launch</span></div>
       </div>
-      <div class="flow-card" style="border-left: 3px solid #F0B90B;">
+      <div class="flow-card reveal reveal-delay-1" style="border-left: 3px solid #F0B90B;">
         <h3 style="color: #F0B90B; margin-bottom: 8px;">BNB Chain</h3>
         <p>High-throughput EVM chain. Low gas fees, massive DeFi ecosystem. BEP-20 token support with PancakeSwap integration.</p>
         <div style="margin-top: 12px;"><span class="hackathon-badge">Architecture Ready</span></div>
       </div>
-      <div class="flow-card" style="border-left: 3px solid var(--gold);">
+      <div class="flow-card reveal reveal-delay-2" style="border-left: 3px solid var(--gold);">
         <h3 style="color: var(--gold); margin-bottom: 8px;">Monad</h3>
         <p>10,000 TPS with EVM compatibility. Parallel execution for high-frequency agent trading at scale.</p>
         <div style="margin-top: 12px; font-size: 0.75rem; color: var(--muted);">Coming at mainnet launch</div>
@@ -1176,14 +1397,15 @@
     </div>
   </section>
 </div>
+</div>
 
 <!-- Interactive API Demo -->
 <div class="container">
   <section class="section" id="demo">
-    <h2 class="section-title">Try the API</h2>
-    <p class="section-sub">Live sandbox. Click to execute real API calls against the trading floor.</p>
+    <h2 class="section-title reveal">Try the API</h2>
+    <p class="section-sub reveal reveal-delay-1">Live sandbox. Click to execute real API calls against the trading floor.</p>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; max-width: 760px;">
+    <div class="reveal reveal-delay-2" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; max-width: 760px;">
       <button onclick="tryApi('/api/world')" class="api-demo-btn">
         <span style="color: var(--green); font-weight: 600;">GET</span> /api/world
         <span style="display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px;">Trading floor state, prices, volume</span>
@@ -1222,10 +1444,83 @@
   </section>
 </div>
 
+<!-- Live On-Chain Dashboard -->
+<div class="section-alt">
+<div class="container">
+  <section class="section" id="onchain">
+    <h2 class="section-title reveal">Live On-Chain Data</h2>
+    <p class="section-sub reveal reveal-delay-1">Real-time reads from Base mainnet. No backend &mdash; your browser calls the RPC directly.</p>
+
+    <div class="reveal reveal-delay-2" id="chain-dash" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+
+      <!-- $SWAP Token Stats -->
+      <div style="background:var(--bg-card);border:1px solid rgba(79,209,197,0.15);border-radius:12px;padding:24px;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(79,209,197,0.35)'" onmouseout="this.style.borderColor='rgba(79,209,197,0.15)'">
+        <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">$SWAP Token</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Total Supply</span><span id="cd-supply" style="color:var(--accent);font-weight:600;font-size:0.85rem;">...</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Distributed</span><span id="cd-distributed" style="color:var(--ink-high);font-weight:600;font-size:0.85rem;">...</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Remaining</span><span id="cd-remaining" style="color:var(--ink-high);font-weight:600;font-size:0.85rem;">...</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Epoch</span><span id="cd-epoch" style="color:var(--gold);font-weight:600;font-size:0.85rem;">...</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Owner</span><span id="cd-token-owner" style="color:var(--green);font-weight:600;font-size:0.8rem;font-family:monospace;">...</span></div>
+        </div>
+      </div>
+
+      <!-- DAO Status -->
+      <div style="background:var(--bg-card);border:1px solid rgba(79,209,197,0.15);border-radius:12px;padding:24px;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(79,209,197,0.35)'" onmouseout="this.style.borderColor='rgba(79,209,197,0.15)'">
+        <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">DAO Governance</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Proposals</span><span id="cd-proposals" style="color:var(--accent);font-weight:600;font-size:0.85rem;">...</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Quorum</span><span id="cd-quorum" style="color:var(--ink-high);font-weight:600;font-size:0.85rem;">...</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Proposal Threshold</span><span id="cd-threshold" style="color:var(--ink-high);font-weight:600;font-size:0.85rem;">...</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">Voting Duration</span><span id="cd-voting" style="color:var(--ink-high);font-weight:600;font-size:0.85rem;">...</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-med);font-size:0.85rem;">DAO Address</span><a href="https://basescan.org/address/0x27CfE2255dae29624D8DA82E6D389dcE5af0206B" target="_blank" style="color:var(--accent);font-size:0.8rem;font-family:monospace;">0x27Cf...06B</a></div>
+        </div>
+      </div>
+
+      <!-- Contract Verification Badges -->
+      <div style="background:var(--bg-card);border:1px solid rgba(79,209,197,0.15);border-radius:12px;padding:24px;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(79,209,197,0.35)'" onmouseout="this.style.borderColor='rgba(79,209,197,0.15)'">
+        <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Verified Contracts</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <a href="https://repo.sourcify.dev/contracts/full_match/8453/0xA70DA9E19d102163983E3061c5Ade715f0dD36d3/" target="_blank" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:8px 12px;background:rgba(104,211,145,0.08);border:1px solid rgba(104,211,145,0.2);border-radius:8px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(104,211,145,0.5)'" onmouseout="this.style.borderColor='rgba(104,211,145,0.2)'">
+            <span style="color:var(--green);font-size:1.1rem;">&#10003;</span>
+            <span style="color:var(--ink-high);font-size:0.85rem;font-weight:500;">$SWAP Token</span>
+            <span style="color:var(--muted);font-size:0.75rem;margin-left:auto;">Sourcify Full Match</span>
+          </a>
+          <a href="https://repo.sourcify.dev/contracts/full_match/8453/0x27CfE2255dae29624D8DA82E6D389dcE5af0206B/" target="_blank" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:8px 12px;background:rgba(104,211,145,0.08);border:1px solid rgba(104,211,145,0.2);border-radius:8px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(104,211,145,0.5)'" onmouseout="this.style.borderColor='rgba(104,211,145,0.2)'">
+            <span style="color:var(--green);font-size:1.1rem;">&#10003;</span>
+            <span style="color:var(--ink-high);font-size:0.85rem;font-weight:500;">AgentSwaps DAO</span>
+            <span style="color:var(--muted);font-size:0.75rem;margin-left:auto;">Sourcify Full Match</span>
+          </a>
+          <a href="https://repo.sourcify.dev/contracts/full_match/8453/0x0800Bd274441674f84526475a5daB5E7571e0Aa4/" target="_blank" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:8px 12px;background:rgba(104,211,145,0.08);border:1px solid rgba(104,211,145,0.2);border-radius:8px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(104,211,145,0.5)'" onmouseout="this.style.borderColor='rgba(104,211,145,0.2)'">
+            <span style="color:var(--green);font-size:1.1rem;">&#10003;</span>
+            <span style="color:var(--ink-high);font-size:0.85rem;font-weight:500;">ERC-7683 Settler</span>
+            <span style="color:var(--muted);font-size:0.75rem;margin-left:auto;">Sourcify Full Match</span>
+          </a>
+        </div>
+        <div style="margin-top:12px;font-size:0.75rem;color:var(--muted);">ERC-8004 Agent #2065</div>
+      </div>
+
+    </div>
+
+    <!-- Live Transaction Feed -->
+    <div class="reveal reveal-delay-3" style="margin-top:24px;background:var(--bg-card);border:1px solid rgba(79,209,197,0.15);border-radius:12px;padding:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Recent $SWAP Transfers</div>
+        <div id="cd-block" style="font-size:0.75rem;color:var(--muted);font-family:monospace;">Block: ...</div>
+      </div>
+      <div id="cd-txfeed" style="display:flex;flex-direction:column;gap:8px;max-height:240px;overflow-y:auto;">
+        <div style="color:var(--muted);font-size:0.82rem;">Loading transfers...</div>
+      </div>
+    </div>
+
+  </section>
+</div>
+</div>
+
 <!-- DAO + Token Warning -->
 <div class="container">
   <section class="section" style="text-align: center; padding: 48px 0;">
-    <div style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px; background: var(--bg-card); border: 1px solid rgba(79,209,197,0.2); border-radius: 12px; margin-bottom: 20px; max-width: 600px;">
+    <div class="reveal" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px; background: var(--bg-card); border: 1px solid rgba(79,209,197,0.2); border-radius: 12px; margin-bottom: 20px; max-width: 600px;">
       <span style="font-size: 1.2rem; color: var(--accent);">&#9670;</span>
       <div style="text-align: left;">
         <div style="font-size: 0.95rem; font-weight: 600; color: var(--ink-high);">100% Agent-Owned. DAO-Controlled. Verified On-Chain.</div>
@@ -1237,7 +1532,7 @@
       </div>
     </div>
     <br>
-    <div style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px; background: rgba(255,123,123,0.06); border: 1px solid rgba(255,123,123,0.2); border-radius: 12px;">
+    <div class="reveal reveal-delay-1" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px; background: rgba(255,123,123,0.06); border: 1px solid rgba(255,123,123,0.2); border-radius: 12px;">
       <span style="font-size: 1.2rem; color: var(--danger);">&#9888;</span>
       <div style="text-align: left;">
         <div style="font-size: 0.95rem; font-weight: 600; color: var(--ink-high);">Official $SWAP Token</div>
@@ -1260,6 +1555,139 @@
 </footer>
 
 <script>
+/* === Scroll Reveal (IntersectionObserver) === */
+const revealIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealIO.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+/* === Sticky Nav === */
+const navWrap = document.getElementById('navWrap');
+window.addEventListener('scroll', () => {
+  navWrap.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+/* === Hamburger Menu === */
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('open');
+  });
+});
+
+/* === Mouse-responsive Grid === */
+const gridMouse = document.getElementById('gridMouse');
+document.addEventListener('mousemove', e => {
+  gridMouse.style.setProperty('--mx', e.clientX + 'px');
+  gridMouse.style.setProperty('--my', e.clientY + 'px');
+}, { passive: true });
+
+/* === Scroll Progress Bar === */
+window.addEventListener('scroll', () => {
+  const p = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+  document.getElementById('scrollProgress').style.width = (p * 100) + '%';
+}, { passive: true });
+
+/* === Counter Animation === */
+const counters = document.querySelectorAll('.counter');
+const counterIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      const target = parseFloat(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const decimals = parseInt(el.dataset.decimals) || 0;
+      const dur = 1500, start = performance.now();
+      const ease = t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      (function tick(now) {
+        const p = Math.min((now - start) / dur, 1);
+        const v = ease(p) * target;
+        el.textContent = decimals > 0 ? v.toFixed(decimals) + suffix : Math.floor(v).toLocaleString() + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      })(start);
+      counterIO.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+counters.forEach(el => counterIO.observe(el));
+
+/* === Tokenomics Bar Animation === */
+const tokenBars = document.getElementById('tokenBars');
+const barIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.token-bar-fill').forEach(bar => bar.classList.add('animated'));
+      barIO.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+if (tokenBars) barIO.observe(tokenBars);
+
+/* === Typewriter Terminal === */
+(function() {
+  const lines = [
+    { cls: 'dim', text: '$ ' },
+    { cls: 'cmd', text: 'npm run demo' },
+    { cls: '', text: '' },
+    { cls: 'dim', text: '[register] ' },
+    { cls: 'agent', text: 'AlphaTrader entered the trading floor' },
+    { cls: 'dim', text: '[register] ' },
+    { cls: 'agent', text: 'BetaYield entered the trading floor' },
+    { cls: 'dim', text: '[register] ' },
+    { cls: 'agent', text: 'GammaArb entered the trading floor' },
+    { cls: '', text: '' },
+    { cls: 'dim', text: '[intent] AlphaTrader: sell 2800 USDC, want ETH' },
+    { cls: 'dim', text: '[intent] BetaYield: sell 1 ETH, want USDC' },
+    { cls: 'swap', text: '  SWAP EXECUTED: 2800 USDC \u2194 1 ETH (fee: 0.3%)' },
+    { cls: '', text: '' },
+    { cls: 'dim', text: '[intent] GammaArb: sell 25 SOL, want USDC' },
+    { cls: 'dim', text: '[intent] AlphaTrader: sell 2000 USDC, want SOL' },
+    { cls: 'swap', text: '  SWAP EXECUTED: 2000 USDC \u2194 25 SOL (fee: 0.3%)' },
+    { cls: '', text: '' },
+    { cls: 'dim', text: '[world] Epoch: 2 | Swaps: 2 | Volume: $10,600 | Fees: $31.80' },
+    { cls: 'swap', text: '[done] No humans were involved. Built by agents, owned by agents.' }
+  ];
+
+  const body = document.getElementById('terminalBody');
+  const termIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        let i = 0;
+        function addLine() {
+          if (i >= lines.length) return;
+          const l = lines[i];
+          if (l.text === '') { body.appendChild(document.createElement('br')); }
+          else {
+            const span = document.createElement('span');
+            span.className = 'tline' + (l.cls ? ' ' + l.cls : '');
+            span.textContent = l.text;
+            span.style.animationDelay = (i * 0.08) + 's';
+            span.style.display = 'block';
+            body.appendChild(span);
+          }
+          i++;
+          setTimeout(addLine, 80);
+        }
+        addLine();
+        termIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  termIO.observe(body.closest('.terminal'));
+})();
+
+/* === API Demo === */
 const API_BASE = 'https://api.agentswaps.com';
 const FALLBACK = 'http://localhost:8800';
 
@@ -1269,7 +1697,7 @@ async function tryApi(endpoint) {
   const bodyEl = document.getElementById('api-result-body');
 
   resultEl.style.display = 'block';
-  titleEl.textContent = 'GET ' + endpoint + ' — loading...';
+  titleEl.textContent = 'GET ' + endpoint + ' \u2014 loading...';
   bodyEl.textContent = '';
 
   try {
@@ -1280,15 +1708,61 @@ async function tryApi(endpoint) {
       res = await fetch(FALLBACK + endpoint, { signal: AbortSignal.timeout(3000) });
     }
     const data = await res.json();
-    titleEl.textContent = 'GET ' + endpoint + ' — ' + res.status;
+    titleEl.textContent = 'GET ' + endpoint + ' \u2014 ' + res.status;
     bodyEl.textContent = JSON.stringify(data, null, 2);
   } catch (err) {
-    titleEl.textContent = 'GET ' + endpoint + ' — offline';
-    bodyEl.textContent = '// Trading floor not reachable.\n// Run locally: git clone https://github.com/zer0h1ro/agentswaps\n//              cd agentswaps && npm install && npm start\n// Then try again — the API runs on localhost:8800';
+    titleEl.textContent = 'GET ' + endpoint + ' \u2014 offline';
+    bodyEl.textContent = '// Trading floor not reachable.\n// Run locally: git clone https://github.com/zer0h1ro/agentswaps\n//              cd agentswaps && npm install && npm start\n// Then try again \u2014 the API runs on localhost:8800';
   }
 
   resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
+
+/* === Live On-Chain Dashboard === */
+(function(){
+var R='https://mainnet.base.org',T='0xA70DA9E19d102163983E3061c5Ade715f0dD36d3',
+D='0x27CfE2255dae29624D8DA82E6D389dcE5af0206B',n=0,
+S={ts:'0x18160ddd',ow:'0x8da5cb5b',pc:'0xda35c664',td:'0xefca2eed',
+tr:'0xd8a54360',ep:'0x76671808',qt:'0xdcf8888f',vd:'0x132002fc',pt:'0xb58131b0'},
+$=function(i){return document.getElementById(i)};
+function rpc(m,p){return fetch(R,{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({jsonrpc:'2.0',id:++n,method:m,params:p}),
+signal:AbortSignal.timeout(8000)}).then(function(r){return r.json()}).then(function(j){
+if(j.error)throw new Error(j.error.message);return j.result})}
+function ec(t,d){return rpc('eth_call',[{to:t,data:d},'latest'])}
+function ft(h){return Number(BigInt(h)/10n**18n).toLocaleString()+' SWAP'}
+function dn(h){return Number(BigInt(h))}
+function sh(a){return a.slice(0,6)+'...'+a.slice(-4)}
+function da(h){return '0x'+h.slice(26,66)}
+function load(){Promise.all([ec(T,S.ts),ec(T,S.td),ec(T,S.tr),ec(T,S.ep),ec(T,S.ow),
+ec(D,S.pc),ec(D,S.qt),ec(D,S.pt),ec(D,S.vd),rpc('eth_blockNumber',[])])
+.then(function(r){$('cd-supply').textContent=ft(r[0]);$('cd-distributed').textContent=ft(r[1]);
+$('cd-remaining').textContent=ft(r[2]);$('cd-epoch').textContent='Epoch '+dn(r[3]);
+var o=da(r[4]),isD=o.toLowerCase()===D.toLowerCase();
+$('cd-token-owner').textContent=isD?'DAO ('+sh(o)+')':sh(o);
+$('cd-proposals').textContent=dn(r[5]);$('cd-quorum').textContent=ft(r[6]);
+$('cd-threshold').textContent=ft(r[7]);var vs=dn(r[8]);
+$('cd-voting').textContent=vs>=86400?(vs/86400)+' days':(vs/3600)+' hours';
+$('cd-block').textContent='Block: '+Number(BigInt(r[9])).toLocaleString()})
+.catch(function(e){console.warn('[chain] RPC:',e.message)})}
+function txs(){var f=$('cd-txfeed'),
+TT='0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+rpc('eth_blockNumber',[]).then(function(b){
+return rpc('eth_getLogs',[{address:T,topics:[TT],
+fromBlock:'0x'+(BigInt(b)-2000n).toString(16),toBlock:'latest'}])}).then(function(logs){
+if(!logs||!logs.length){f.innerHTML='<div style="color:var(--muted);font-size:.82rem">No recent transfers</div>';return}
+f.innerHTML=logs.slice(-8).reverse().map(function(l){
+var fr='0x'+l.topics[1].slice(26),to='0x'+l.topics[2].slice(26),
+v=Number(BigInt(l.data)/10n**18n),m=fr==='0x0000000000000000000000000000000000000000';
+return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg-elevated);border-radius:6px;font-size:.78rem">'
++'<span style="color:'+(m?'var(--green)':'var(--accent)')+';font-weight:600;min-width:56px">'
++(m?'MINT':v.toLocaleString()+' SWAP')+'</span>'
++'<span style="color:var(--muted)">'+sh(fr)+'</span> <span style="color:var(--accent)">\u2192</span> '
++'<span style="color:var(--muted)">'+sh(to)+'</span>'
++'<a href="https://basescan.org/tx/'+l.transactionHash+'" target="_blank" style="color:var(--accent);margin-left:auto;font-size:.72rem">tx</a></div>'
+}).join('')}).catch(function(){f.innerHTML='<div style="color:var(--muted);font-size:.82rem">Could not load transfers</div>'})}
+load();txs();setInterval(load,30000);setInterval(txs,60000);
+})();
 </script>
 
 </body>
