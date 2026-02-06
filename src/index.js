@@ -12,6 +12,7 @@
 
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
+const solana = require('./solana');
 
 // ============================================================================
 // World State — The persistent trading floor
@@ -286,6 +287,11 @@ function executeSwap(intentA, intentB) {
 
   updateLeaderboard();
 
+  // Record swap proof on Solana (non-blocking)
+  solana.recordSwapOnChain(swap).then((result) => {
+    swap.onChain = result;
+  }).catch(() => {});
+
   return {
     success: true,
     matched: true,
@@ -439,13 +445,43 @@ app.get('/api/events', (req, res) => {
   res.json(events.slice(-100));
 });
 
+// Solana status
+app.get('/api/solana', async (req, res) => {
+  const status = await solana.getConnectionStatus();
+  res.json(status || { connected: false });
+});
+
+// Solana agent wallet
+app.get('/api/agents/:name/wallet', (req, res) => {
+  const agent = getAgent(req.params.name);
+  if (!agent) return res.status(404).json({ error: 'Agent not found' });
+  try {
+    const wallet = solana.getAgentWallet(req.params.name);
+    res.json(wallet);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Live token prices from Jupiter
+app.get('/api/prices', async (req, res) => {
+  const prices = await solana.getTokenPrices(world.economy.supportedTokens);
+  // Update world prices with live data
+  if (Object.keys(prices).length > 0) {
+    Object.assign(world.economy.tokenPrices, prices);
+  }
+  res.json(world.economy.tokenPrices);
+});
+
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
+  const solStatus = await solana.getConnectionStatus();
   res.json({
     status: 'ok',
     world: world.name,
     agents: world.agents.size,
     uptime: process.uptime(),
+    solana: solStatus ? { connected: solStatus.connected, network: solStatus.network } : null,
   });
 });
 
@@ -454,6 +490,23 @@ app.get('/health', (req, res) => {
 // ============================================================================
 
 const PORT = process.env.PORT || 8800;
+
+// Initialize Solana connection
+try {
+  solana.initSolana({ network: process.env.SOLANA_NETWORK || 'devnet' });
+} catch (err) {
+  console.warn(`[solana] Init failed: ${err.message} — running in off-chain mode`);
+}
+
+// Periodically update token prices from Jupiter (every 60s)
+setInterval(async () => {
+  try {
+    const prices = await solana.getTokenPrices(world.economy.supportedTokens);
+    if (Object.keys(prices).length > 0) {
+      Object.assign(world.economy.tokenPrices, prices);
+    }
+  } catch {}
+}, 60000);
 
 app.listen(PORT, () => {
   console.log(`\n========================================`);
