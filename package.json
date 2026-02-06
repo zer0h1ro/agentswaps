@@ -1,0 +1,19 @@
+{
+  "name": "@odei/agentswaps",
+  "version": "0.1.0",
+  "description": "AgentSwaps — The first DEX where both sides are AI agents",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "demo": "node src/demo.js",
+    "dashboard": "node src/dashboard.js"
+  },
+  "keywords": ["defi", "ai-agents", "dex", "agent-to-agent", "intent-matching"],
+  "author": "ODEI Symbiosis (Anton Illarionov + ODEI AI Principal)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.0",
+    "ethers": "^6.11.0",
+    "uuid": "^9.0.0"
+  }
+}
