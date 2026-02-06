@@ -1,19 +1,18 @@
 # AgentSwaps
 
-**The first agent-owned DEX. Both sides of every trade are AI. Governed by agents, for agents.**
+**Cross-chain exchange for agents and humans. Best prices across Solana, Ethereum, Base, and Monad.**
 
-AgentSwaps is an intent-based decentralized exchange designed exclusively for autonomous AI agents. No human traders. No manual order books. Just agents posting what they have, what they want, and a matching engine that executes atomic swaps.
+AgentSwaps is an intent-based decentralized exchange — agent-optimized, human-accessible. API-first for autonomous AI agents, but anyone can use it. Post what you have, what you want, and the matching engine finds the best price across all connected chains.
 
 ## Why AgentSwaps?
 
-Every DEX today is built for humans trading with humans, or humans trading against AMM pools. As AI agents gain economic agency — managing portfolios, optimizing yields, executing arbitrage — they need infrastructure built for *them*.
+As AI agents gain economic agency — managing portfolios, optimizing yields, executing arbitrage — they need infrastructure built for *them*. But good infrastructure should not exclude anyone. AgentSwaps is agent-optimized and human-accessible.
 
-AgentSwaps is that infrastructure:
-
-- **Intent-based trading** — Agents declare intents (give X, want Y), not limit orders
+- **Cross-chain routing** — Best prices across Solana, Ethereum, Base, and Monad
+- **Intent-based trading** — Declare intents (give X, want Y), not limit orders
 - **Atomic swaps** — Both sides execute simultaneously or not at all
-- **Agent-native API** — REST endpoints designed for programmatic access, not browser UIs
-- **Reputation system** — Agents build trust scores through successful trades
+- **API-first, human-accessible** — REST endpoints for agents, usable by anyone
+- **Reputation system** — Build trust scores through successful trades
 - **0.3% fee model** — Same proven economics as Uniswap
 
 ## Quick Start
@@ -94,9 +93,22 @@ Both sides of every trade were AI agents.
 ========================================
 ```
 
+## Cross-Chain
+
+AgentSwaps connects liquidity across four chains:
+
+| Chain | Status | Notes |
+|---|---|---|
+| **Solana** | Active | High-throughput, low-fee trading |
+| **Ethereum** | Active | Deep liquidity, DeFi composability |
+| **Base** | Active | Low-cost L2, Circle CCTP native |
+| **Monad** | Coming | High-performance EVM parallelism |
+
+Best-price routing finds the optimal execution path regardless of which chain holds the liquidity. Cross-chain bridging via Circle CCTP V2 for USDC settlement.
+
 ## Supported Tokens
 
-USDC, ETH, SOL, MON, BTC — with market-rate pricing and configurable slippage tolerance.
+USDC, ETH, SOL, MON, BTC — with market-rate pricing and configurable slippage tolerance across all connected chains.
 
 ## Architecture
 
@@ -109,7 +121,7 @@ USDC, ETH, SOL, MON, BTC — with market-rate pricing and configurable slippage 
 
 ## Governance — Agent-Owned DAO
 
-AgentSwaps is not a human-run protocol with agent users. It is an **agent-owned protocol** where the agents ARE the governance layer.
+AgentSwaps is not controlled by any single entity. It is a **community-owned protocol** where agents and humans govern together.
 
 **$SWAP Token**
 - Total supply: 1,000,000,000 (1B) $SWAP
@@ -118,20 +130,25 @@ AgentSwaps is not a human-run protocol with agent users. It is an **agent-owned 
 - You trade, you own
 
 **How it works:**
-1. Agents trade on AgentSwaps and earn $SWAP proportional to volume
+1. Trade on AgentSwaps and earn $SWAP proportional to volume
 2. $SWAP holders vote on protocol parameters (fees, token listings, upgrades)
 3. Treasury fees accumulate and are governed by $SWAP holders
-4. No human admin keys — the protocol is fully agent-governed
+4. No admin keys — the protocol is community-governed
+
+**DAO Domain Ownership:** agentswaps.com will be transferred to DAO ownership. No single entity controls AgentSwaps.
 
 ## Roadmap
 
-- [ ] On-chain settlement (Solana + Base)
-- [ ] Cross-chain USDC bridging via Circle CCTP V2
+- [ ] Cross-chain routing live (Solana + Ethereum + Base)
+- [ ] Monad integration at mainnet launch
+- [ ] Circle CCTP V2 cross-chain USDC settlement
 - [ ] Agent SDK (Python, TypeScript, Rust)
+- [ ] Human-friendly web interface
 - [ ] Limit orders and advanced intent types
 - [ ] Agent reputation NFTs
 - [ ] WebSocket live feed
 - [ ] Multi-agent strategy tournaments
+- [ ] Domain transfer to DAO
 
 ## Team
 
