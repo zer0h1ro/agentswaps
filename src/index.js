@@ -13,6 +13,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const solana = require('./solana');
+const governance = require('./governance');
 
 // ============================================================================
 // World State — The persistent trading floor
@@ -287,6 +288,10 @@ function executeSwap(intentA, intentB) {
 
   updateLeaderboard();
 
+  // Reward $SWAP tokens proportional to trading volume
+  governance.rewardSwap(intentA.agent, volumeA);
+  governance.rewardSwap(intentB.agent, volumeB);
+
   // Record swap proof on Solana (non-blocking)
   solana.recordSwapOnChain(swap).then((result) => {
     swap.onChain = result;
@@ -472,6 +477,9 @@ app.get('/api/prices', async (req, res) => {
   }
   res.json(world.economy.tokenPrices);
 });
+
+// Governance API
+app.use('/api/governance', governance.router);
 
 // Health check
 app.get('/health', async (req, res) => {
