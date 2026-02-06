@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * AgentSwaps Demo — Two AI agents trading autonomously
  *

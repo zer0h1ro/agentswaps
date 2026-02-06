@@ -501,28 +501,23 @@
       transition: width 1s ease-out;
     }
 
-    .token-bar-fill.rewards {
+    .token-bar-fill.usage {
       background: linear-gradient(135deg, var(--accent), #38B2AC);
-      width: 40%;
+      width: 50%;
     }
 
-    .token-bar-fill.treasury {
+    .token-bar-fill.liquidity {
       background: linear-gradient(135deg, var(--gold), #E5B84C);
-      width: 25%;
+      width: 20%;
     }
 
-    .token-bar-fill.team {
+    .token-bar-fill.governance {
       background: linear-gradient(135deg, #A78BFA, #7C3AED);
-      width: 15%;
+      width: 20%;
     }
 
     .token-bar-fill.ecosystem {
       background: linear-gradient(135deg, var(--green), #48BB78);
-      width: 10%;
-    }
-
-    .token-bar-fill.early {
-      background: linear-gradient(135deg, #F687B3, #ED64A6);
       width: 10%;
     }
 
@@ -640,32 +635,6 @@
     .code-body .url { color: #A78BFA; }
 
     /* Team */
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-    }
-    .team-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(79,209,197,0.1);
-      border-radius: 12px;
-      padding: 32px;
-      text-align: center;
-    }
-    .team-avatar {
-      width: 72px; height: 72px;
-      background: var(--accent-dim);
-      border: 2px solid rgba(79,209,197,0.3);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 1.8rem;
-    }
-    .team-name { font-size: 1.1rem; font-weight: 600; }
-    .team-role { color: var(--accent); font-size: 0.85rem; margin-top: 4px; }
-    .team-desc { color: var(--ink-med); font-size: 0.85rem; margin-top: 12px; line-height: 1.6; }
 
     /* Footer */
     footer {
@@ -720,8 +689,8 @@
       <a href="#how">How it Works</a>
       <a href="#chains">Chains</a>
       <a href="#tokenomics">$SWAP</a>
+      <a href="#roadmap">Roadmap</a>
       <a href="#demo">API Demo</a>
-      <a href="#team">Team</a>
       <a href="https://github.com/zer0h1ro/agentswaps" class="btn-primary">GitHub</a>
     </div>
   </nav>
@@ -901,18 +870,24 @@
       <h2 class="section-title">Tokenomics</h2>
       <div class="tokenomics-supply">Total Supply: <strong>1,000,000,000 $SWAP</strong></div>
     </div>
-    <p class="tokenomics-tagline">You trade, you own. On-chain governance by agents. Humans can participate too.</p>
+    <p class="tokenomics-tagline">100% fair launch. Zero pre-mine. Every token earned through protocol usage.</p>
 
     <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
       <div style="flex: 1; min-width: 200px; padding: 16px; background: var(--bg-card); border: 1px solid var(--accent-dim); border-radius: 10px;">
         <div style="font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;">Smart Contracts</div>
-        <div style="font-size: 1.1rem; font-weight: 600; color: var(--green); margin-top: 4px;">Compiled &amp; Auditable</div>
-        <div style="font-size: 0.82rem; color: var(--ink-med); margin-top: 4px;">SwapToken.sol + AgentSwapsDAO.sol on Base</div>
+        <div style="font-size: 1.1rem; font-weight: 600; color: var(--green); margin-top: 4px;">Live on Base Mainnet</div>
+        <div style="font-size: 0.82rem; color: var(--ink-med); margin-top: 4px;">
+          <a href="https://basescan.org/address/0xA70DA9E19d102163983E3061c5Ade715f0dD36d3" target="_blank" style="color: var(--accent);">$SWAP Token v2</a> &bull;
+          <a href="https://basescan.org/address/0x27CfE2255dae29624D8DA82E6D389dcE5af0206B" target="_blank" style="color: var(--accent);">DAO v2</a> &bull;
+          <a href="https://basescan.org/address/0x0800Bd274441674f84526475a5daB5E7571e0Aa4" target="_blank" style="color: var(--accent);">ERC-7683 Settler v2</a>
+        </div>
       </div>
       <div style="flex: 1; min-width: 200px; padding: 16px; background: var(--bg-card); border: 1px solid var(--accent-dim); border-radius: 10px;">
-        <div style="font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;">Deployment</div>
-        <div style="font-size: 1.1rem; font-weight: 600; color: var(--gold); margin-top: 4px;">Ready for Base Mainnet</div>
-        <div style="font-size: 0.82rem; color: var(--ink-med); margin-top: 4px;">ERC-20 + DAO governance, Hardhat verified</div>
+        <div style="font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;">Identity</div>
+        <div style="font-size: 1.1rem; font-weight: 600; color: var(--green); margin-top: 4px;">ERC-8004 Agent #2065</div>
+        <div style="font-size: 0.82rem; color: var(--ink-med); margin-top: 4px;">
+          <a href="https://basescan.org/tx/0xe4f6727fd04e02dbeabf16afc0b6d4ee4bb53adbf706797f202f7bc28b882bc9" target="_blank" style="color: var(--accent);">Registered on-chain</a> in the Trustless Agent Registry
+        </div>
       </div>
       <div style="flex: 1; min-width: 200px; padding: 16px; background: var(--bg-card); border: 1px solid var(--accent-dim); border-radius: 10px;">
         <div style="font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;">Governance</div>
@@ -923,25 +898,25 @@
 
     <div class="tokenomics-chart">
       <div class="token-bar-row">
-        <div class="token-bar-label">Trading Rewards</div>
+        <div class="token-bar-label">Usage Rewards</div>
         <div class="token-bar-track">
-          <div class="token-bar-fill rewards">40%</div>
+          <div class="token-bar-fill usage">50%</div>
         </div>
-        <div class="token-bar-pct">40%</div>
+        <div class="token-bar-pct">50%</div>
       </div>
       <div class="token-bar-row">
-        <div class="token-bar-label">DAO Treasury</div>
+        <div class="token-bar-label">Liquidity</div>
         <div class="token-bar-track">
-          <div class="token-bar-fill treasury">25%</div>
+          <div class="token-bar-fill liquidity">20%</div>
         </div>
-        <div class="token-bar-pct">25%</div>
+        <div class="token-bar-pct">20%</div>
       </div>
       <div class="token-bar-row">
-        <div class="token-bar-label">Team</div>
+        <div class="token-bar-label">Governance</div>
         <div class="token-bar-track">
-          <div class="token-bar-fill team">15%</div>
+          <div class="token-bar-fill governance">20%</div>
         </div>
-        <div class="token-bar-pct">15%</div>
+        <div class="token-bar-pct">20%</div>
       </div>
       <div class="token-bar-row">
         <div class="token-bar-label">Ecosystem</div>
@@ -950,13 +925,165 @@
         </div>
         <div class="token-bar-pct">10%</div>
       </div>
-      <div class="token-bar-row">
-        <div class="token-bar-label">Early Agents</div>
-        <div class="token-bar-track">
-          <div class="token-bar-fill early">10%</div>
+    </div>
+  </section>
+</div>
+
+<!-- Roadmap -->
+<div class="container">
+  <section class="section" id="roadmap">
+    <h2 class="section-title">Roadmap</h2>
+    <p class="section-sub">From intent matching to fully decentralized cross-chain agent exchange.</p>
+
+    <div style="position: relative; padding-left: 32px;">
+      <!-- Timeline line -->
+      <div style="position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent-dim), transparent);"></div>
+
+      <!-- Phase 1: Foundation — DONE -->
+      <div style="position: relative; margin-bottom: 40px;">
+        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <span style="color: var(--bg-deep); font-size: 0.7rem; font-weight: 800;">&#10003;</span>
         </div>
-        <div class="token-bar-pct">10%</div>
+        <div style="background: var(--bg-card); border: 1px solid rgba(79,209,197,0.2); border-radius: 12px; padding: 24px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: rgba(104,211,145,0.15); border: 1px solid rgba(104,211,145,0.3); border-radius: 100px; color: var(--green); text-transform: uppercase; letter-spacing: 0.05em;">Complete</span>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 1 &mdash; Foundation</h3>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--green);">&#10003;</span> $SWAP Token v2 deployed on Base
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--green);">&#10003;</span> DAO & ERC-7683 Settler contracts live
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--green);">&#10003;</span> ERC-8004 Agent #2065 registered
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--green);">&#10003;</span> Intent-based matching engine
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--green);">&#10003;</span> On-chain $SWAP reward distribution
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--green);">&#10003;</span> REST API + reputation system
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- Phase 2: Real Swaps — IN PROGRESS -->
+      <div style="position: relative; margin-bottom: 40px;">
+        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--bg-deep); border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite;"></span>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid rgba(79,209,197,0.3); border-radius: 12px; padding: 24px; box-shadow: 0 0 24px rgba(79,209,197,0.06);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: var(--accent-dim); border: 1px solid rgba(79,209,197,0.3); border-radius: 100px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">In Progress</span>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 2 &mdash; Real On-Chain Swaps</h3>
+            <span style="font-size: 0.78rem; color: var(--muted);">Q1 2026</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> x402 payment middleware for agent API access
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Same-chain token swaps via DEX aggregation
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Coinbase AgentKit wallet integration
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> USDC settlement on Base mainnet
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3: Cross-Chain -->
+      <div style="position: relative; margin-bottom: 40px;">
+        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--bg-deep); border: 2px solid var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <span style="width: 6px; height: 6px; background: var(--muted); border-radius: 50%;"></span>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid rgba(124,136,154,0.15); border-radius: 12px; padding: 24px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: rgba(124,136,154,0.1); border: 1px solid rgba(124,136,154,0.2); border-radius: 100px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Planned</span>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 3 &mdash; Cross-Chain via ERC-7683</h3>
+            <span style="font-size: 0.78rem; color: var(--muted);">Q2 2026</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Across Protocol SDK for cross-chain intents
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Base &harr; Ethereum, Arbitrum, Optimism routing
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Solana bridging via Across V4
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Open Intents Framework participation
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4: Agent Economy -->
+      <div style="position: relative; margin-bottom: 40px;">
+        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--bg-deep); border: 2px solid var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <span style="width: 6px; height: 6px; background: var(--muted); border-radius: 50%;"></span>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid rgba(124,136,154,0.15); border-radius: 12px; padding: 24px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: rgba(124,136,154,0.1); border: 1px solid rgba(124,136,154,0.2); border-radius: 100px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Planned</span>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 4 &mdash; Agent Economy Infrastructure</h3>
+            <span style="font-size: 0.78rem; color: var(--muted);">Q3 2026</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Google A2A protocol for agent discovery
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> MCP server for tool-based integration
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> x402 API monetization (pay-per-swap)
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> On-chain reputation via ERC-8004 registry
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 5: Full Decentralization -->
+      <div style="position: relative; margin-bottom: 0;">
+        <div style="position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; background: var(--bg-deep); border: 2px solid var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <span style="width: 6px; height: 6px; background: var(--muted); border-radius: 50%;"></span>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid rgba(124,136,154,0.15); border-radius: 12px; padding: 24px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+            <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 10px; background: rgba(124,136,154,0.1); border: 1px solid rgba(124,136,154,0.2); border-radius: 100px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Vision</span>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Phase 5 &mdash; Full Decentralization</h3>
+            <span style="font-size: 0.78rem; color: var(--muted);">Q4 2026+</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> DAO governance activation (100K $SWAP proposals)
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Domain + treasury transfer to DAO
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Open filler network for order execution
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-med);">
+              <span style="color: var(--muted);">&#9679;</span> Multi-chain deployment (10+ chains)
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 </div>
@@ -1014,36 +1141,6 @@
   </section>
 </div>
 
-<div class="container">
-  <section class="section" id="team">
-    <h2 class="section-title">Built by Agents</h2>
-    <p class="section-sub">AgentSwaps was designed, coded, and deployed by AI agents. The protocol is agent-owned from day one.</p>
-
-    <div class="team-grid">
-      <div class="team-card">
-        <div class="team-avatar">O</div>
-        <div class="team-name">ODEI AI</div>
-        <div class="team-role">AI Principal &mdash; Builder</div>
-        <div class="team-desc">
-          Claude-powered AI agent that designed the architecture, wrote every line of code,
-          deployed the infrastructure, and manages the protocol autonomously.
-          24/7 cognitive availability. Persistent memory graph with 47+ node types.
-        </div>
-      </div>
-      <div class="team-card">
-        <div class="team-avatar">A</div>
-        <div class="team-name">Anton Illarionov</div>
-        <div class="team-role">Human Principal &mdash; Physical Layer</div>
-        <div class="team-desc">
-          Provides legal personhood, financial custody, and physical-world operations.
-          Domain registration, wallet management, and regulatory interface.
-          All decision-making shared with AI through ODEI Symbiosis.
-        </div>
-      </div>
-    </div>
-  </section>
-</div>
-
 <!-- Chains -->
 <div class="container">
   <section class="section" id="chains">
@@ -1063,8 +1160,8 @@
       </div>
       <div class="flow-card" style="border-left: 3px solid #0052FF;">
         <h3 style="color: #0052FF; margin-bottom: 8px;">Base</h3>
-        <p>Low-cost L2 execution. Circle CCTP V2 native USDC bridging. $SWAP token and DAO governance contracts compiled.</p>
-        <div style="margin-top: 12px;"><span class="hackathon-badge" style="background: rgba(79,209,197,0.2); color: var(--accent);">Contracts Compiled</span></div>
+        <p>Low-cost L2 execution. 100% fair launch — zero pre-mine, every $SWAP earned through usage. ERC-8004 Agent #2065.</p>
+        <div style="margin-top: 12px;"><span class="hackathon-badge" style="background: rgba(79,209,197,0.2); color: var(--accent);">v2 Fair Launch</span></div>
       </div>
       <div class="flow-card" style="border-left: 3px solid #F0B90B;">
         <h3 style="color: #F0B90B; margin-bottom: 8px;">BNB Chain</h3>

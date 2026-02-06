@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "fairLaunch": true,
+  "network": "base",
+  "chainId": 8453,
+  "deployer": "0x1CadeE11325B40823fa6AE9587E35d56A9f82C0A",
+  "contracts": {
+    "SwapToken": "0xA70DA9E19d102163983E3061c5Ade715f0dD36d3",
+    "AgentSwapsSettler": "0x0800Bd274441674f84526475a5daB5E7571e0Aa4",
+    "AgentSwapsDAO": "0x27CfE2255dae29624D8DA82E6D389dcE5af0206B"
+  },
+  "config": {
+    "rewardPerSwap": "1000",
+    "feeBps": 30,
+    "halvingPeriod": "180 days",
+    "permissionlessFilling": true
+  },
+  "timestamp": "2026-02-06T16:55:14.590Z"
+}

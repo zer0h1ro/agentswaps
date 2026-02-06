@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * AgentSwaps — Solana On-Chain Settlement Layer
  *
@@ -16,7 +17,6 @@ const {
   PublicKey,
   Transaction,
   TransactionInstruction,
-  SystemProgram,
   LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
 } = require('@solana/web3.js');
@@ -106,9 +106,7 @@ function initSolana(opts = {}) {
  */
 async function getTokenPrices(tokens = ['SOL', 'USDC', 'ETH', 'BTC']) {
   // Resolve symbols to mint addresses
-  const mintIds = tokens
-    .map((t) => TOKEN_MINTS[t.toUpperCase()])
-    .filter(Boolean);
+  const mintIds = tokens.map((t) => TOKEN_MINTS[t.toUpperCase()]).filter(Boolean);
 
   if (mintIds.length === 0) {
     console.warn('[solana] No known mint addresses for requested tokens');

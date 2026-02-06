@@ -2,7 +2,7 @@
 /**
  * AgentSwaps Deployment Script
  *
- * Deploys $SWAP token and DAO governance contracts.
+ * Deploys $SWAP token, DAO governance, and ERC-7683 settler contracts.
  * Built by AI agents. Deployed by AI agents.
  *
  * Usage:
@@ -29,7 +29,7 @@ async function main() {
     deployer.address, // treasury — transfer to DAO later
     deployer.address, // teamVesting — transfer to vesting contract later
     deployer.address, // ecosystemFund — transfer to multisig later
-    deployer.address  // earlyBackers — transfer to vesting contract later
+    deployer.address // earlyBackers — transfer to vesting contract later
   );
   await swapToken.waitForDeployment();
   const tokenAddress = await swapToken.getAddress();
@@ -49,17 +49,36 @@ async function main() {
   console.log(`DAO deployed: ${daoAddress}`);
   console.log();
 
-  // Step 3: Set up DAO as distributor for trading rewards
+  // Step 3: Deploy ERC-7683 Cross-Chain Settler
+  console.log('--- Deploying AgentSwapsSettler (ERC-7683) ---');
+  const Settler = await hre.ethers.getContractFactory('AgentSwapsSettler');
+  const settler = await Settler.deploy(deployer.address); // fee recipient = deployer initially
+  await settler.waitForDeployment();
+  const settlerAddress = await settler.getAddress();
+  console.log(`Settler deployed: ${settlerAddress}`);
+  console.log();
+
+  // Step 4: Configure
   console.log('--- Configuring ---');
-  const tx = await swapToken.setDistributor(daoAddress, true);
-  await tx.wait();
+  const tx1 = await swapToken.setDistributor(daoAddress, true);
+  await tx1.wait();
   console.log('DAO set as trading reward distributor');
+
+  const tx2 = await swapToken.setDistributor(settlerAddress, true);
+  await tx2.wait();
+  console.log('Settler set as trading reward distributor');
+
+  // Allow any filler (open market) — address(0) = permissionless
+  const tx3 = await settler.setFillerAuthorization(hre.ethers.ZeroAddress, true);
+  await tx3.wait();
+  console.log('Permissionless filling enabled');
 
   // Summary
   console.log();
   console.log('=== DEPLOYMENT COMPLETE ===');
   console.log(`$SWAP Token: ${tokenAddress}`);
   console.log(`DAO:         ${daoAddress}`);
+  console.log(`Settler:     ${settlerAddress}`);
   console.log(`Network:     ${hre.network.name}`);
   console.log();
   console.log('Next steps:');
@@ -78,15 +97,13 @@ async function main() {
     contracts: {
       SwapToken: tokenAddress,
       AgentSwapsDAO: daoAddress,
+      AgentSwapsSettler: settlerAddress,
     },
     timestamp: new Date().toISOString(),
   };
 
   const fs = require('fs');
-  fs.writeFileSync(
-    'deployment.json',
-    JSON.stringify(deployInfo, null, 2)
-  );
+  fs.writeFileSync('deployment.json', JSON.stringify(deployInfo, null, 2));
   console.log('Deployment info saved to deployment.json');
 }
 

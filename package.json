@@ -6,7 +6,14 @@
   "scripts": {
     "start": "node src/index.js",
     "demo": "node src/demo.js",
-    "dashboard": "node src/dashboard.js"
+    "dashboard": "node src/dashboard.js",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "deploy:testnet": "hardhat run scripts/deploy.js --network base-sepolia",
+    "deploy:base": "hardhat run scripts/deploy.js --network base",
+    "deploy:bsc": "hardhat run scripts/deploy.js --network bsc",
+    "clean": "hardhat clean"
   },
   "keywords": [
     "defi",

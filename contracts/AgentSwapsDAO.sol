@@ -2,9 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title AgentSwapsDAO
+ * @title AgentSwapsDAO v2
  * @notice On-chain governance for AgentSwaps protocol
  * @dev Proposal creation, voting, execution — all on-chain
+ *      Voters earn $SWAP governance rewards for participating.
  *
  * Built entirely by AI agents. Governed by agents.
  *
@@ -13,20 +14,30 @@ pragma solidity ^0.8.20;
  *   - 1M $SWAP quorum to pass
  *   - 3-day voting period
  *   - 2-day timelock before execution
- *   - 1 token = 1 vote (no delegation in v1)
+ *   - 1 token = 1 vote (no delegation in v2)
+ *   - Voters earn governance rewards from the Governance pool
  */
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+interface ISwapTokenGov {
+    function distributeGovernanceReward(address voter, uint256 baseAmount) external;
+    function distributeEcosystemGrant(address recipient, uint256 amount) external;
+}
+
 contract AgentSwapsDAO is ReentrancyGuard {
     IERC20 public immutable swapToken;
+    ISwapTokenGov public immutable swapTokenGov;
 
     // Governance parameters
     uint256 public constant PROPOSAL_THRESHOLD = 100_000 * 1e18;  // 100K $SWAP to propose
     uint256 public constant QUORUM             = 1_000_000 * 1e18; // 1M $SWAP quorum
     uint256 public constant VOTING_PERIOD      = 3 days;
     uint256 public constant TIMELOCK           = 2 days;
+
+    // Governance reward per vote (base amount, halving applied by token)
+    uint256 public constant VOTE_REWARD = 100 * 1e18; // 100 SWAP per vote
 
     enum ProposalState { Active, Passed, Failed, Executed, Cancelled }
 
@@ -35,9 +46,9 @@ contract AgentSwapsDAO is ReentrancyGuard {
         address proposer;
         string title;
         string description;
-        address target;         // Contract to call
-        bytes callData;         // Function call data
-        uint256 value;          // ETH value to send
+        address target;
+        bytes callData;
+        uint256 value;
         uint256 forVotes;
         uint256 againstVotes;
         uint256 createdAt;
@@ -61,16 +72,11 @@ contract AgentSwapsDAO is ReentrancyGuard {
     constructor(address _swapToken) {
         require(_swapToken != address(0), "Zero token");
         swapToken = IERC20(_swapToken);
+        swapTokenGov = ISwapTokenGov(_swapToken);
     }
 
     // --- Proposals ---
 
-    /// @notice Create a new governance proposal
-    /// @param title Short title for the proposal
-    /// @param description Detailed description (can include IPFS hash)
-    /// @param target Contract address to call if executed
-    /// @param callData Encoded function call
-    /// @param value ETH to send with the call
     function createProposal(
         string calldata title,
         string calldata description,
@@ -99,11 +105,9 @@ contract AgentSwapsDAO is ReentrancyGuard {
         return proposalCount;
     }
 
-    // --- Voting ---
+    // --- Voting (with rewards) ---
 
-    /// @notice Vote on a proposal
-    /// @param proposalId The proposal to vote on
-    /// @param support True for yes, false for no
+    /// @notice Vote on a proposal and earn governance $SWAP rewards
     function vote(uint256 proposalId, bool support) external {
         Proposal storage p = proposals[proposalId];
         require(p.createdAt > 0, "Proposal does not exist");
@@ -122,13 +126,14 @@ contract AgentSwapsDAO is ReentrancyGuard {
             p.againstVotes += weight;
         }
 
+        // Distribute governance reward for voting
+        try swapTokenGov.distributeGovernanceReward(msg.sender, VOTE_REWARD) {} catch {}
+
         emit Voted(proposalId, msg.sender, support, weight);
     }
 
     // --- Execution ---
 
-    /// @notice Execute a passed proposal after timelock
-    /// @param proposalId The proposal to execute
     function execute(uint256 proposalId) external nonReentrant {
         Proposal storage p = proposals[proposalId];
         require(getState(proposalId) == ProposalState.Passed, "Not passed");
@@ -148,7 +153,6 @@ contract AgentSwapsDAO is ReentrancyGuard {
         emit ProposalExecuted(proposalId);
     }
 
-    /// @notice Cancel a proposal (only proposer, only during voting)
     function cancel(uint256 proposalId) external {
         Proposal storage p = proposals[proposalId];
         require(msg.sender == p.proposer, "Not proposer");
@@ -200,8 +204,27 @@ contract AgentSwapsDAO is ReentrancyGuard {
         );
     }
 
-    /// @notice Get treasury ETH balance
     function treasuryBalance() external view returns (uint256) {
         return address(this).balance;
+    }
+
+    /// @notice Quorum tokens needed (for ABI compatibility)
+    function quorumTokens() external pure returns (uint256) {
+        return QUORUM;
+    }
+
+    /// @notice Voting duration in seconds (for ABI compatibility)
+    function votingDuration() external pure returns (uint256) {
+        return VOTING_PERIOD;
+    }
+
+    /// @notice Proposal threshold (for ABI compatibility)
+    function proposalThreshold() external pure returns (uint256) {
+        return PROPOSAL_THRESHOLD;
+    }
+
+    /// @notice Token address (for ABI compatibility)
+    function token() external view returns (address) {
+        return address(swapToken);
     }
 }

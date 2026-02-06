@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * $SWAP Token & DAO Governance Module
  *
@@ -18,12 +19,12 @@ const { v4: uuidv4 } = require('uuid');
 
 const TOTAL_SUPPLY = 1_000_000_000; // 1 Billion $SWAP
 
+// v2 Fair Launch — all tokens locked in contract, earned through usage
 const DISTRIBUTION = {
-  tradingRewards: { label: 'Trading Rewards', pct: 0.40, cap: TOTAL_SUPPLY * 0.40, minted: 0 },
-  daoTreasury:    { label: 'DAO Treasury',    pct: 0.25, cap: TOTAL_SUPPLY * 0.25, minted: 0 },
-  team:           { label: 'Team',            pct: 0.15, cap: TOTAL_SUPPLY * 0.15, minted: 0 },
-  ecosystem:      { label: 'Ecosystem',       pct: 0.10, cap: TOTAL_SUPPLY * 0.10, minted: 0 },
-  earlyAgents:    { label: 'Early Agents',    pct: 0.10, cap: TOTAL_SUPPLY * 0.10, minted: 0 },
+  usage: { label: 'Usage Rewards', pct: 0.5, cap: TOTAL_SUPPLY * 0.5, minted: 0 },
+  liquidity: { label: 'Liquidity', pct: 0.2, cap: TOTAL_SUPPLY * 0.2, minted: 0 },
+  governance: { label: 'Governance', pct: 0.2, cap: TOTAL_SUPPLY * 0.2, minted: 0 },
+  ecosystem: { label: 'Ecosystem', pct: 0.1, cap: TOTAL_SUPPLY * 0.1, minted: 0 },
 };
 
 // $SWAP balances per agent (agentName -> balance)
@@ -58,13 +59,13 @@ function getTokenBalance(agentName) {
  * @returns {{ minted: number, balance: number, pool: object }}
  */
 function rewardSwap(agentName, volumeUSD) {
-  const pool = DISTRIBUTION.tradingRewards;
+  const pool = DISTRIBUTION.usage;
   const amount = Math.floor(volumeUSD * REWARD_PER_USD);
 
   // Cap at pool limit
   const mintable = Math.min(amount, pool.cap - pool.minted);
   if (mintable <= 0) {
-    return { minted: 0, balance: getTokenBalance(agentName), pool: poolStats('tradingRewards') };
+    return { minted: 0, balance: getTokenBalance(agentName), pool: poolStats('usage') };
   }
 
   pool.minted += mintable;
@@ -74,7 +75,7 @@ function rewardSwap(agentName, volumeUSD) {
   return {
     minted: mintable,
     balance: balances.get(agentName),
-    pool: poolStats('tradingRewards'),
+    pool: poolStats('usage'),
   };
 }
 
@@ -99,10 +100,14 @@ function getTokenomics() {
   const totalMinted = Object.values(DISTRIBUTION).reduce((s, p) => s + p.minted, 0);
   return {
     token: '$SWAP',
+    version: 2,
+    fairLaunch: true,
     totalSupply: TOTAL_SUPPLY,
     totalMinted,
     circulatingPct: ((totalMinted / TOTAL_SUPPLY) * 100).toFixed(4),
     rewardRate: `${REWARD_PER_USD} $SWAP per $1 USD volume`,
+    halvingPeriod: '180 days',
+    onChainToken: '0xA70DA9E19d102163983E3061c5Ade715f0dD36d3',
     pools: Object.fromEntries(
       Object.entries(DISTRIBUTION).map(([k, p]) => [
         k,

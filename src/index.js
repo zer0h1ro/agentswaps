@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * AgentSwaps — The First Agent-to-Agent DEX
  *
@@ -12,8 +13,12 @@
 
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
+const { ethers } = require('ethers');
 const solana = require('./solana');
 const governance = require('./governance');
+const x402 = require('./x402');
+const base = require('./base');
+const onchain = require('./onchain');
 
 // ============================================================================
 // World State — The persistent trading floor
@@ -46,7 +51,7 @@ const world = {
       USDC: 1.0,
       ETH: 2800.0,
       SOL: 120.0,
-      MON: 0.50,
+      MON: 0.5,
       BTC: 98000.0,
     },
   },
@@ -225,18 +230,14 @@ function executeSwap(intentA, intentB) {
 
   // Execute the swap
   // Agent A receives what Agent B gives (minus fee)
-  agentA.balance[intentB.give.token] =
-    (agentA.balance[intentB.give.token] || 0) + (giveAmountB - feeB);
+  agentA.balance[intentB.give.token] = (agentA.balance[intentB.give.token] || 0) + (giveAmountB - feeB);
 
   // Agent B receives what Agent A gives (minus fee)
-  agentB.balance[intentA.give.token] =
-    (agentB.balance[intentA.give.token] || 0) + (giveAmountA - feeA);
+  agentB.balance[intentA.give.token] = (agentB.balance[intentA.give.token] || 0) + (giveAmountA - feeA);
 
   // Calculate USD volume
-  const volumeA =
-    giveAmountA * (world.economy.tokenPrices[intentA.give.token] || 1);
-  const volumeB =
-    giveAmountB * (world.economy.tokenPrices[intentB.give.token] || 1);
+  const volumeA = giveAmountA * (world.economy.tokenPrices[intentA.give.token] || 1);
+  const volumeB = giveAmountB * (world.economy.tokenPrices[intentB.give.token] || 1);
   const totalVolume = volumeA + volumeB;
 
   // Update agent stats
@@ -253,7 +254,8 @@ function executeSwap(intentA, intentB) {
   // Update world state
   world.economy.totalVolume += totalVolume;
   world.economy.totalSwaps++;
-  world.economy.totalFees += feeA * (world.economy.tokenPrices[intentA.give.token] || 1) +
+  world.economy.totalFees +=
+    feeA * (world.economy.tokenPrices[intentA.give.token] || 1) +
     feeB * (world.economy.tokenPrices[intentB.give.token] || 1);
 
   // Mark intents as filled
@@ -288,14 +290,45 @@ function executeSwap(intentA, intentB) {
 
   updateLeaderboard();
 
-  // Reward $SWAP tokens proportional to trading volume
+  // Reward $SWAP tokens — in-memory tracking
   governance.rewardSwap(intentA.agent, volumeA);
   governance.rewardSwap(intentB.agent, volumeB);
 
+  // Distribute $SWAP rewards on-chain (non-blocking)
+  if (agentA.walletAddress && agentB.walletAddress) {
+    onchain
+      .distributeSwapRewards(agentA.walletAddress, agentB.walletAddress)
+      .then((rewards) => {
+        swap.onChainRewards = rewards;
+        if (rewards.rewardA.success) {
+          addEvent('reward_distributed', {
+            agent: intentA.agent,
+            reward: rewards.rewardA.reward,
+            txHash: rewards.rewardA.txHash,
+            message: `${intentA.agent} earned ${rewards.rewardA.reward} $SWAP on-chain`,
+          });
+        }
+        if (rewards.rewardB.success) {
+          addEvent('reward_distributed', {
+            agent: intentB.agent,
+            reward: rewards.rewardB.reward,
+            txHash: rewards.rewardB.txHash,
+            message: `${intentB.agent} earned ${rewards.rewardB.reward} $SWAP on-chain`,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(`[onchain] Reward distribution failed: ${err.message}`);
+      });
+  }
+
   // Record swap proof on Solana (non-blocking)
-  solana.recordSwapOnChain(swap).then((result) => {
-    swap.onChain = result;
-  }).catch(() => {});
+  solana
+    .recordSwapOnChain(swap)
+    .then((result) => {
+      swap.onChain = result;
+    })
+    .catch(() => {});
 
   return {
     success: true,
@@ -330,9 +363,7 @@ function getWorldState() {
 function getActiveIntents(token) {
   const intents = [...world.intents.values()].filter((i) => i.status === 'active');
   if (token) {
-    return intents.filter(
-      (i) => i.give.token === token || i.want.token === token
-    );
+    return intents.filter((i) => i.give.token === token || i.want.token === token);
   }
   return intents;
 }
@@ -385,9 +416,21 @@ function addEvent(type, data) {
 const app = express();
 app.use(express.json());
 
-// World state
-app.get('/api/world', (req, res) => {
-  res.json(getWorldState());
+// x402 Payment Middleware — gate paid endpoints with USDC micropayments on Base
+// Activate by setting: X402_ENABLED=true X402_PAY_TO=0xYourAddress
+app.use(x402.paymentMiddleware());
+
+// x402 Admin — payment status, pricing table, service discovery
+app.use('/api/x402', x402.router);
+
+// World state (includes on-chain data from Base)
+app.get('/api/world', async (req, res) => {
+  const worldState = getWorldState();
+  const onChainState = await base.getOnChainState();
+  res.json({
+    ...worldState,
+    base: onChainState,
+  });
 });
 
 // Register agent
@@ -398,11 +441,17 @@ app.post('/api/agents', (req, res) => {
   res.json(result);
 });
 
-// Get agent info
-app.get('/api/agents/:name', (req, res) => {
+// Get agent info (enriched with on-chain balance)
+app.get('/api/agents/:name', async (req, res) => {
   const agent = getAgent(req.params.name);
   if (!agent) return res.status(404).json({ error: 'Agent not found' });
-  res.json(agent);
+
+  // Enrich with on-chain $SWAP balance if agent has a wallet
+  const enriched = { ...agent };
+  if (agent.walletAddress && ethers.isAddress(agent.walletAddress)) {
+    enriched.onChainSwapBalance = await onchain.getSwapBalance(agent.walletAddress);
+  }
+  res.json(enriched);
 });
 
 // Deposit tokens
@@ -481,15 +530,35 @@ app.get('/api/prices', async (req, res) => {
 // Governance API
 app.use('/api/governance', governance.router);
 
+// Base chain API — on-chain state, contracts, balances
+app.use('/api/base', base.router);
+
+// On-chain reward status
+app.get('/api/onchain/status', (req, res) => {
+  res.json(onchain.getStatus());
+});
+
+// On-chain $SWAP balance for an agent
+app.get('/api/onchain/balance/:address', async (req, res) => {
+  const balance = await onchain.getSwapBalance(req.params.address);
+  res.json({ address: req.params.address, token: 'SWAP', balance });
+});
+
 // Health check
 app.get('/health', async (req, res) => {
   const solStatus = await solana.getConnectionStatus();
+  const baseState = await base.getOnChainState();
+  const onchainStatus = onchain.getStatus();
   res.json({
     status: 'ok',
     world: world.name,
+    version: 2,
+    fairLaunch: true,
     agents: world.agents.size,
     uptime: process.uptime(),
     solana: solStatus ? { connected: solStatus.connected, network: solStatus.network } : null,
+    base: baseState ? { connected: true, chainId: base.CHAIN_ID, blockNumber: baseState.blockNumber } : null,
+    onchain: { initialized: onchainStatus.initialized, rewards: onchainStatus.stats },
   });
 });
 
@@ -506,6 +575,14 @@ try {
   console.warn(`[solana] Init failed: ${err.message} — running in off-chain mode`);
 }
 
+// Initialize Base chain connection (read-only)
+base.initBase();
+
+// Initialize on-chain writer (deployer wallet)
+onchain.init().catch((err) => {
+  console.warn(`[onchain] Init failed: ${err.message} — rewards will be in-memory only`);
+});
+
 // Periodically update token prices from Jupiter (every 60s)
 setInterval(async () => {
   try {
@@ -513,8 +590,12 @@ setInterval(async () => {
     if (Object.keys(prices).length > 0) {
       Object.assign(world.economy.tokenPrices, prices);
     }
-  } catch {}
+  } catch {
+    /* ignore */
+  }
 }, 60000);
+
+const x402Config = x402.resolveConfig();
 
 app.listen(PORT, () => {
   console.log(`\n========================================`);
@@ -526,6 +607,14 @@ app.listen(PORT, () => {
   console.log(`  Agents: ${world.agents.size}`);
   console.log(`  Supported tokens: ${world.economy.supportedTokens.join(', ')}`);
   console.log(`  Fee: ${world.economy.feeRate * 100}%`);
+  console.log(
+    `  x402: ${x402Config.enabled ? `ACTIVE (${x402Config.environment}, ${x402Config.network})` : 'inactive'}`
+  );
+  console.log(`  Base chain: http://localhost:${PORT}/api/base/state`);
+  console.log(`  Contracts: http://localhost:${PORT}/api/base/contracts`);
+  console.log(`  On-chain rewards: http://localhost:${PORT}/api/onchain/status`);
+  console.log(`  Pricing: http://localhost:${PORT}/api/x402/pricing`);
+  console.log(`  Discovery: http://localhost:${PORT}/api/x402/discover`);
   console.log(`========================================\n`);
 });
 
