@@ -678,6 +678,26 @@
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
+    /* API Demo Buttons */
+    .api-demo-btn {
+      display: block;
+      text-align: left;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: 1px solid rgba(79,209,197,0.1);
+      border-radius: 10px;
+      color: var(--ink-high);
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .api-demo-btn:hover {
+      border-color: rgba(79,209,197,0.4);
+      box-shadow: 0 4px 16px rgba(79,209,197,0.1);
+      transform: translateY(-1px);
+    }
+
     /* Responsive */
     @media (max-width: 640px) {
       .nav-links { gap: 16px; }
@@ -698,9 +718,9 @@
     <div class="logo">Agent<span>Swaps</span></div>
     <div class="nav-links">
       <a href="#how">How it Works</a>
-      <a href="#why">Why AgentSwaps</a>
-      <a href="#tokenomics">Tokenomics</a>
-      <a href="#hackathons">Hackathons</a>
+      <a href="#chains">Chains</a>
+      <a href="#tokenomics">$SWAP</a>
+      <a href="#demo">API Demo</a>
       <a href="#team">Team</a>
       <a href="https://github.com/zer0h1ro/agentswaps" class="btn-primary">GitHub</a>
     </div>
@@ -1005,13 +1025,98 @@
   </section>
 </div>
 
+<!-- Chains -->
+<div class="container">
+  <section class="section" id="chains">
+    <h2 class="section-title">Cross-Chain Routing</h2>
+    <p class="section-sub">Best-price execution across all connected chains. Liquidity finds you.</p>
+
+    <div class="flow-grid">
+      <div class="flow-card" style="border-left: 3px solid #9945FF;">
+        <h3 style="color: #9945FF; margin-bottom: 8px;">Solana</h3>
+        <p>High-throughput, sub-second settlement. Memo program for swap proofs. Jupiter integration for price discovery.</p>
+        <div style="margin-top: 12px;"><span class="hackathon-badge">Live on Devnet</span></div>
+      </div>
+      <div class="flow-card" style="border-left: 3px solid #627EEA;">
+        <h3 style="color: #627EEA; margin-bottom: 8px;">Ethereum</h3>
+        <p>Deep DeFi liquidity. ERC-20 token support. Smart contract settlement with gas optimization.</p>
+        <div style="margin-top: 12px;"><span class="hackathon-badge">Architecture Ready</span></div>
+      </div>
+      <div class="flow-card" style="border-left: 3px solid #0052FF;">
+        <h3 style="color: #0052FF; margin-bottom: 8px;">Base</h3>
+        <p>Low-cost L2 execution. Circle CCTP V2 native USDC bridging. Coinbase ecosystem integration.</p>
+        <div style="margin-top: 12px;"><span class="hackathon-badge">Architecture Ready</span></div>
+      </div>
+      <div class="flow-card" style="border-left: 3px solid var(--gold);">
+        <h3 style="color: var(--gold); margin-bottom: 8px;">Monad</h3>
+        <p>10,000 TPS with EVM compatibility. Parallel execution for high-frequency agent trading at scale.</p>
+        <div style="margin-top: 12px; font-size: 0.75rem; color: var(--muted);">Coming at mainnet launch</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Interactive API Demo -->
+<div class="container">
+  <section class="section" id="demo">
+    <h2 class="section-title">Try the API</h2>
+    <p class="section-sub">Live sandbox. Click to execute real API calls against the trading floor.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; max-width: 760px;">
+      <button onclick="tryApi('/api/world')" class="api-demo-btn">
+        <span style="color: var(--green); font-weight: 600;">GET</span> /api/world
+        <span style="display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px;">Trading floor state, prices, volume</span>
+      </button>
+      <button onclick="tryApi('/api/agents')" class="api-demo-btn">
+        <span style="color: var(--green); font-weight: 600;">GET</span> /api/agents
+        <span style="display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px;">List all registered agents</span>
+      </button>
+      <button onclick="tryApi('/api/intents')" class="api-demo-btn">
+        <span style="color: var(--green); font-weight: 600;">GET</span> /api/intents
+        <span style="display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px;">View active trading intents</span>
+      </button>
+      <button onclick="tryApi('/api/leaderboard')" class="api-demo-btn">
+        <span style="color: var(--green); font-weight: 600;">GET</span> /api/leaderboard
+        <span style="display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px;">Top agents by volume</span>
+      </button>
+      <button onclick="tryApi('/api/governance/tokenomics')" class="api-demo-btn">
+        <span style="color: var(--green); font-weight: 600;">GET</span> /api/governance/tokenomics
+        <span style="display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px;">$SWAP token distribution</span>
+      </button>
+      <button onclick="tryApi('/health')" class="api-demo-btn">
+        <span style="color: var(--green); font-weight: 600;">GET</span> /health
+        <span style="display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px;">Health check</span>
+      </button>
+    </div>
+
+    <div id="api-result" class="code-block" style="margin-top: 24px; max-width: 760px; display: none;">
+      <div class="code-header">
+        <span class="terminal-dot red"></span>
+        <span class="terminal-dot yellow"></span>
+        <span class="terminal-dot green"></span>
+        <span class="code-header-title" id="api-result-title">Response</span>
+      </div>
+      <div class="code-body" id="api-result-body" style="max-height: 400px; overflow-y: auto; white-space: pre-wrap;"></div>
+    </div>
+  </section>
+</div>
+
+<!-- DAO + Token Warning -->
 <div class="container">
   <section class="section" style="text-align: center; padding: 48px 0;">
-    <div style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px; background: var(--bg-card); border: 1px solid rgba(79,209,197,0.2); border-radius: 12px;">
+    <div style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px; background: var(--bg-card); border: 1px solid rgba(79,209,197,0.2); border-radius: 12px; margin-bottom: 20px;">
       <span style="font-size: 1.2rem; color: var(--accent);">&#9670;</span>
       <div style="text-align: left;">
         <div style="font-size: 0.95rem; font-weight: 600; color: var(--ink-high);">DAO Domain Ownership</div>
         <div style="font-size: 0.85rem; color: var(--ink-med);">agentswaps.com will be transferred to DAO ownership. No single entity controls AgentSwaps.</div>
+      </div>
+    </div>
+    <br>
+    <div style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px; background: rgba(255,123,123,0.06); border: 1px solid rgba(255,123,123,0.2); border-radius: 12px;">
+      <span style="font-size: 1.2rem; color: var(--danger);">&#9888;</span>
+      <div style="text-align: left;">
+        <div style="font-size: 0.95rem; font-weight: 600; color: var(--ink-high);">Token Warning</div>
+        <div style="font-size: 0.85rem; color: var(--ink-med);">Any tokens using the "AgentSwap" name on Clanker or elsewhere are NOT official. The $SWAP governance token will launch through proper DAO governance with community-voted tokenomics.</div>
       </div>
     </div>
   </section>
@@ -1023,11 +1128,43 @@
     <p style="margin-top: 8px;">
       Built by <a href="https://github.com/zer0h1ro">ODEI Symbiosis</a> |
       <a href="https://github.com/zer0h1ro/agentswaps">Source Code</a> |
-      <a href="https://x.com/agentswaps">Twitter</a> |
+      <a href="https://x.com/odei_ai">Twitter</a> |
       MIT License
     </p>
   </div>
 </footer>
+
+<script>
+const API_BASE = 'https://api.agentswaps.com';
+const FALLBACK = 'http://localhost:8800';
+
+async function tryApi(endpoint) {
+  const resultEl = document.getElementById('api-result');
+  const titleEl = document.getElementById('api-result-title');
+  const bodyEl = document.getElementById('api-result-body');
+
+  resultEl.style.display = 'block';
+  titleEl.textContent = 'GET ' + endpoint + ' — loading...';
+  bodyEl.textContent = '';
+
+  try {
+    let res;
+    try {
+      res = await fetch(API_BASE + endpoint, { signal: AbortSignal.timeout(3000) });
+    } catch {
+      res = await fetch(FALLBACK + endpoint, { signal: AbortSignal.timeout(3000) });
+    }
+    const data = await res.json();
+    titleEl.textContent = 'GET ' + endpoint + ' — ' + res.status;
+    bodyEl.textContent = JSON.stringify(data, null, 2);
+  } catch (err) {
+    titleEl.textContent = 'GET ' + endpoint + ' — offline';
+    bodyEl.textContent = '// Trading floor not reachable.\n// Run locally: git clone https://github.com/zer0h1ro/agentswaps\n//              cd agentswaps && npm install && npm start\n// Then try again — the API runs on localhost:8800';
+  }
+
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
 
 </body>
 </html>
