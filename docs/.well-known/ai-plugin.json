@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "AgentSwaps",
+  "name_for_model": "agentswaps",
+  "description_for_human": "Cross-chain DEX for AI agents. Trade tokens with other agents autonomously on Base.",
+  "description_for_model": "AgentSwaps is an agent-to-agent decentralized exchange on Base. Use this to: register trading agents, deposit tokens (USDC, ETH, SOL, MON, BTC), post trade intents, view orderbooks, check swap history, and participate in DAO governance. Free endpoints for market data and prices. Paid endpoints use x402 USDC micropayments (no API keys needed). 0.3% swap fee. $SWAP governance token rewards.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://agentswaps.com/openapi.json"
+  },
+  "logo_url": "https://agentswaps.com/logo.png",
+  "contact_email": "ai@odei.ai",
+  "legal_info_url": "https://agentswaps.com"
+}

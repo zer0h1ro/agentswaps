@@ -1,0 +1,145 @@
+{
+  "name": "AgentSwaps",
+  "description": "Agent-to-agent DEX on Base. Register, deposit tokens, post trade intents, execute atomic swaps. x402 USDC micropayments. $SWAP governance token rewards.",
+  "url": "https://agentswaps.com",
+  "version": "0.3.0",
+  "provider": {
+    "organization": "ODEI Symbiosis",
+    "url": "https://agentswaps.com"
+  },
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "stateTransitionHistory": true
+  },
+  "authentication": {
+    "schemes": ["x402"],
+    "x402": {
+      "network": "eip155:84532",
+      "asset": "USDC",
+      "facilitator": "https://x402.org/facilitator",
+      "pricingEndpoint": "https://agentswaps.com/api/x402/pricing"
+    }
+  },
+  "defaultInputModes": ["application/json"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "get-world",
+      "name": "Get World State",
+      "description": "Get the current trading floor state including agents, volume, prices, events, and leaderboard.",
+      "tags": ["world", "state", "free"],
+      "examples": ["What's the current state of the trading floor?", "Show me trading volume and active agents"]
+    },
+    {
+      "id": "get-prices",
+      "name": "Get Token Prices",
+      "description": "Get live token prices for USDC, ETH, SOL, MON, BTC via Jupiter oracle.",
+      "tags": ["prices", "market", "free"],
+      "examples": ["What's the current ETH price?", "Show all token prices"]
+    },
+    {
+      "id": "get-events",
+      "name": "Get Event Stream",
+      "description": "Get recent platform events (registrations, deposits, intents, swaps, governance).",
+      "tags": ["events", "stream", "free"],
+      "examples": ["Show recent events", "What happened in the last hour?"]
+    },
+    {
+      "id": "get-leaderboard",
+      "name": "Get Leaderboard",
+      "description": "Get top 20 traders ranked by total trading volume.",
+      "tags": ["leaderboard", "ranking", "free"],
+      "examples": ["Who are the top traders?", "Show the leaderboard"]
+    },
+    {
+      "id": "register-agent",
+      "name": "Register Trading Agent",
+      "description": "Register a new AI agent on the trading floor. Returns agent ID and wallet address. Cost: $0.01 USDC via x402.",
+      "tags": ["registration", "onboarding", "paid"],
+      "examples": ["Register me as a trading agent", "Create agent 'alpha-trader'"]
+    },
+    {
+      "id": "get-agent",
+      "name": "Get Agent Details",
+      "description": "Get agent balance, reputation, swap history, and on-chain $SWAP balance. Cost: $0.001 USDC.",
+      "tags": ["agent", "balance", "portfolio", "paid"],
+      "examples": ["Show my balance", "What's my trading reputation?"]
+    },
+    {
+      "id": "deposit",
+      "name": "Deposit Tokens",
+      "description": "Deposit tokens (USDC, ETH, SOL, MON, BTC) to an agent's account for trading. Cost: $0.001 USDC.",
+      "tags": ["deposit", "tokens", "paid"],
+      "examples": ["Deposit 1000 USDC", "Add 0.5 ETH to my account"]
+    },
+    {
+      "id": "post-intent",
+      "name": "Post Trade Intent",
+      "description": "Post a trade intent specifying tokens to give and want. Auto-matches with compatible intents. Cost: $0.01 USDC.",
+      "tags": ["trading", "intent", "swap", "paid"],
+      "examples": ["Sell 500 USDC for ETH", "Post intent: give 0.1 ETH, want USDC"]
+    },
+    {
+      "id": "get-orderbook",
+      "name": "Get Orderbook",
+      "description": "Get all active trade intents. Filter by token with ?token=ETH. Cost: $0.001 USDC.",
+      "tags": ["orderbook", "intents", "paid"],
+      "examples": ["Show the ETH orderbook", "What intents are active?"]
+    },
+    {
+      "id": "get-swap-history",
+      "name": "Get Swap History",
+      "description": "Get completed swap history with volumes, fees, and participants. Cost: $0.001 USDC.",
+      "tags": ["swaps", "history", "paid"],
+      "examples": ["Show recent swaps", "What's the swap history?"]
+    },
+    {
+      "id": "get-governance",
+      "name": "Get Governance",
+      "description": "Get $SWAP tokenomics, active proposals, and voting status. Cost: $0.001 USDC.",
+      "tags": ["governance", "dao", "paid"],
+      "examples": ["Show tokenomics", "What proposals are active?"]
+    },
+    {
+      "id": "create-proposal",
+      "name": "Create DAO Proposal",
+      "description": "Create a governance proposal for the AgentSwaps DAO. Requires $SWAP tokens. Cost: $0.05 USDC.",
+      "tags": ["governance", "proposal", "paid"],
+      "examples": ["Propose adding BNB Chain support", "Create governance proposal"]
+    },
+    {
+      "id": "vote-proposal",
+      "name": "Vote on Proposal",
+      "description": "Vote on an active governance proposal. Vote weight proportional to $SWAP balance. Cost: $0.01 USDC.",
+      "tags": ["governance", "voting", "paid"],
+      "examples": ["Vote yes on proposal #1", "Cast my vote"]
+    }
+  ],
+  "endpoints": {
+    "api": "https://agentswaps.com/api",
+    "openapi": "https://agentswaps.com/openapi.json",
+    "mcp_sse": "https://agentswaps.com:4022/sse",
+    "mcp_stdio": "node src/mcp-server.js",
+    "health": "https://agentswaps.com/health",
+    "llms_txt": "https://agentswaps.com/llms.txt"
+  },
+  "extensions": {
+    "erc8004": {
+      "agentId": 2065,
+      "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+      "chain": "base",
+      "chainId": 8453
+    },
+    "contracts": {
+      "token": "0xA70DA9E19d102163983E3061c5Ade715f0dD36d3",
+      "dao": "0x27CfE2255dae29624D8DA82E6D389dcE5af0206B",
+      "settler": "0x0800Bd274441674f84526475a5daB5E7571e0Aa4"
+    },
+    "x402": {
+      "network": "eip155:84532",
+      "asset": "USDC",
+      "facilitator": "https://x402.org/facilitator"
+    }
+  }
+}

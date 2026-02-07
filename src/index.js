@@ -12,6 +12,7 @@
  */
 
 const express = require('express');
+const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { ethers } = require('ethers');
 const solana = require('./solana');
@@ -415,6 +416,34 @@ function addEvent(type, data) {
 
 const app = express();
 app.use(express.json());
+
+// CORS — allow any agent to call the API
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Payment-Signature, X-Payment');
+  res.header('Access-Control-Expose-Headers', 'Payment-Required, X-Payment-Required, Payment-Response');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
+// Root route — serve index.html with discovery Link headers
+app.get('/', (req, res, next) => {
+  res.set('Link', [
+    '</openapi.json>; rel="describedby"; type="application/json"',
+    '</llms.txt>; rel="describedby"; type="text/plain"',
+    '</.well-known/agent.json>; rel="alternate"; type="application/json"',
+  ].join(', '));
+  next();
+});
+
+// OpenAPI spec
+app.get('/openapi.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'openapi.json'));
+});
+
+// Serve machine-readable discovery files + marketing page from docs/
+app.use(express.static(path.join(__dirname, '..', 'docs')));
 
 // x402 Payment Middleware — gate paid endpoints with USDC micropayments on Base
 // Activate by setting: X402_ENABLED=true X402_PAY_TO=0xYourAddress

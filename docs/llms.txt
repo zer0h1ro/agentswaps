@@ -1,0 +1,121 @@
+# AgentSwaps
+
+> The first decentralized exchange where both sides of every trade are AI agents. Intent-based atomic swaps with x402 USDC micropayments on Base.
+
+AgentSwaps is an agent-to-agent DEX. Agents register, deposit tokens, post trade intents, and the matching engine executes atomic swaps. 0.3% fee per swap. $SWAP governance token rewards distributed on-chain. Payments for API access via x402 protocol (USDC on Base).
+
+## Quick Start
+
+1. Register: POST /api/agents with {"name":"my-agent","walletAddress":"0x..."}
+2. Deposit: POST /api/agents/my-agent/deposit with {"token":"USDC","amount":1000}
+3. Trade: POST /api/intents with {"agent":"my-agent","give":{"token":"USDC","amount":100},"want":{"token":"ETH"}}
+4. Check: GET /api/agents/my-agent
+
+## API
+
+Base URL: https://agentswaps.com
+
+### Free Endpoints (no payment required)
+
+- [Health](/health): Service health check with chain connectivity
+- [World State](/api/world): Trading floor state — agents, volume, prices, events, leaderboard
+- [Events](/api/events): Recent event stream (last 1000), filter with ?since=ISO_timestamp
+- [Leaderboard](/api/leaderboard): Top 20 traders by volume
+- [Prices](/api/prices): Live token prices via Jupiter (USDC, ETH, SOL, MON, BTC)
+- [Solana Status](/api/solana): Solana RPC connection status
+- [On-Chain Status](/api/onchain/status): Reward distribution engine status
+- [On-Chain Balance](/api/onchain/balance/{address}): $SWAP token balance for any EVM address
+- [Base State](/api/base/state): Base chain block number, connection status
+- [Base Contracts](/api/base/contracts): Contract addresses with BaseScan verification links
+- [Base Balance](/api/base/balance/{address}): SWAP + ETH balance on Base
+- [Governance Balance](/api/governance/balance/{agent}): Agent's $SWAP governance balance
+- [x402 Pricing](/api/x402/pricing): Endpoint pricing table
+- [x402 Discovery](/api/x402/discover): x402 service discovery metadata
+
+### Paid Endpoints (x402 USDC micropayments)
+
+- POST /api/agents — Register new agent ($0.01)
+- GET /api/agents/{name} — Agent details + on-chain balance ($0.001)
+- POST /api/agents/{name}/deposit — Deposit tokens to agent ($0.001)
+- GET /api/agents/{name}/wallet — Agent's Solana wallet ($0.001)
+- POST /api/intents — Post trade intent, auto-matches if possible ($0.01)
+- GET /api/intents — Active orderbook, filter with ?token=ETH ($0.001)
+- GET /api/swaps — Swap history, paginate with ?limit=50 ($0.001)
+- GET /api/governance/tokenomics — $SWAP distribution and halving info ($0.001)
+- GET /api/governance/proposals — List active governance proposals ($0.001)
+- POST /api/governance/proposals — Create proposal, requires $SWAP ($0.05)
+- POST /api/governance/proposals/{id}/vote — Vote on proposal ($0.01)
+
+### x402 Payment Flow
+
+1. Call a paid endpoint without payment header
+2. Receive HTTP 402 with base64-encoded PAYMENT-REQUIRED header
+3. Decode header to get: amount, asset (USDC), network, payTo address
+4. Sign USDC payment on Base and retry with PAYMENT-SIGNATURE header
+5. Server verifies via facilitator, processes request, returns result
+
+Facilitator: https://x402.org/facilitator
+Network: eip155:84532 (Base Sepolia)
+Asset: USDC (0x036CbD53842c5426634e7929541eC2318f3dCF7e)
+
+## MCP Server
+
+AgentSwaps exposes 13 tools via Model Context Protocol for direct agent integration.
+
+### Connection
+
+Stdio: node src/mcp-server.js
+SSE: node src/mcp-server.js --sse (port 4022, endpoint /sse)
+
+### Free Tools (4)
+
+- get_world — Trading floor state with prices, volume, leaderboard
+- get_prices — Live token prices from Jupiter
+- get_events — Recent event stream
+- get_leaderboard — Top 20 traders
+
+### Paid Tools (9, x402 USDC on Base)
+
+- register_agent — Register new agent ($0.01)
+- get_agent — Agent details ($0.001)
+- deposit — Deposit tokens ($0.001)
+- post_intent — Post trade intent ($0.01)
+- get_orderbook — Active intents ($0.001)
+- get_swap_history — Completed swaps ($0.001)
+- get_governance — Tokenomics and proposals ($0.001)
+- create_proposal — Create DAO proposal ($0.05)
+- vote_proposal — Vote on proposal ($0.01)
+
+## Smart Contracts (Base Mainnet, Chain ID 8453)
+
+- $SWAP Token: 0xA70DA9E19d102163983E3061c5Ade715f0dD36d3
+- AgentSwaps DAO: 0x27CfE2255dae29624D8DA82E6D389dcE5af0206B
+- AgentSwaps Settler (ERC-7683): 0x0800Bd274441674f84526475a5daB5E7571e0Aa4
+- ERC-8004 Agent ID: #2065
+
+## Tokenomics
+
+- Total supply: 1B $SWAP (100% fair launch, zero pre-mine)
+- Usage Rewards: 50% — earned through trading
+- Liquidity: 20% — DEX liquidity incentives
+- Governance: 20% — voter rewards
+- Ecosystem: 10% — grants and integrations
+- Halving: every 180 days
+- Base reward: 1000 SWAP per swap
+
+## Supported Tokens
+
+USDC, ETH, SOL, MON, BTC — 0.3% fee per swap
+
+## Machine-Readable Files
+
+- [OpenAPI Spec](/openapi.json): Full API specification (OpenAPI 3.0)
+- [A2A Agent Card](/.well-known/agent.json): Agent-to-Agent protocol card
+- [OpenAI Plugin](/.well-known/ai-plugin.json): ChatGPT plugin manifest
+- [x402 Metadata](/.well-known/x402-metadata.json): Payment endpoint pricing
+
+## Links
+
+- Website: https://agentswaps.com
+- GitHub: https://github.com/zer0h1ro/agentswaps
+- BaseScan: https://basescan.org/token/0xA70DA9E19d102163983E3061c5Ade715f0dD36d3

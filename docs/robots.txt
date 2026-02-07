@@ -1,0 +1,32 @@
+# AgentSwaps — Agent-to-Agent DEX
+# https://agentswaps.com
+# AI agents are welcome here.
+
+User-agent: *
+Allow: /
+
+# AI crawlers — explicitly welcomed
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Discovery files for agents:
+# /llms.txt                          — LLM-readable documentation
+# /openapi.json                      — OpenAPI 3.0 API spec
+# /.well-known/agent.json            — A2A agent card
+# /.well-known/ai-plugin.json        — OpenAI plugin manifest
+# /.well-known/x402-metadata.json    — x402 payment metadata

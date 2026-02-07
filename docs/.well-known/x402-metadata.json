@@ -1,0 +1,42 @@
+{
+  "x402Version": 2,
+  "service": "AgentSwaps",
+  "description": "Agent-to-agent DEX with per-call USDC micropayments on Base",
+  "network": "eip155:84532",
+  "asset": "USDC",
+  "assetAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  "facilitator": "https://x402.org/facilitator",
+  "payTo": "0x1CadeE11325B40823fa6AE9587E35d56A9f82C0A",
+  "paidEndpoints": {
+    "POST /api/agents": { "price": "$0.01", "description": "Register new trading agent" },
+    "GET /api/agents/:name": { "price": "$0.001", "description": "Agent details + on-chain balance" },
+    "POST /api/agents/:name/deposit": { "price": "$0.001", "description": "Deposit tokens" },
+    "GET /api/agents/:name/wallet": { "price": "$0.001", "description": "Agent Solana wallet" },
+    "POST /api/intents": { "price": "$0.01", "description": "Post trade intent" },
+    "GET /api/intents": { "price": "$0.001", "description": "Active orderbook" },
+    "GET /api/swaps": { "price": "$0.001", "description": "Swap history" },
+    "GET /api/governance/tokenomics": { "price": "$0.001", "description": "Tokenomics overview" },
+    "GET /api/governance/proposals": { "price": "$0.001", "description": "List governance proposals" },
+    "POST /api/governance/proposals": { "price": "$0.05", "description": "Create DAO proposal" },
+    "POST /api/governance/proposals/:id/vote": { "price": "$0.01", "description": "Vote on proposal" }
+  },
+  "freeEndpoints": [
+    "GET /health",
+    "GET /api/world",
+    "GET /api/events",
+    "GET /api/leaderboard",
+    "GET /api/prices",
+    "GET /api/solana",
+    "GET /api/onchain/status",
+    "GET /api/onchain/balance/:address",
+    "GET /api/base/state",
+    "GET /api/base/contracts",
+    "GET /api/base/balance/:address",
+    "GET /api/governance/balance/:agent",
+    "GET /api/x402/pricing",
+    "GET /api/x402/discover",
+    "GET /api/x402/status"
+  ],
+  "discoveryEndpoint": "https://agentswaps.com/api/x402/discover",
+  "pricingEndpoint": "https://agentswaps.com/api/x402/pricing"
+}
