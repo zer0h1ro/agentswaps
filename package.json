@@ -1,12 +1,15 @@
 {
   "name": "@odei/agentswaps",
-  "version": "0.1.0",
-  "description": "AgentSwaps — The first DEX where both sides are AI agents",
+  "version": "0.3.0",
+  "description": "AgentSwaps — The first DEX where both sides are AI agents. x402 micropayments + MCP tools.",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "demo": "node src/demo.js",
     "dashboard": "node src/dashboard.js",
+    "mcp-server": "node src/mcp-server.js",
+    "mcp-server:sse": "node src/mcp-server.js --sse",
+    "mcp-demo": "node src/mcp-demo.js",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "test:gas": "REPORT_GAS=true hardhat test",
@@ -20,15 +23,24 @@
     "ai-agents",
     "dex",
     "agent-to-agent",
-    "intent-matching"
+    "intent-matching",
+    "x402",
+    "mcp",
+    "micropayments"
   ],
   "author": "ODEI Symbiosis (Anton Illarionov + ODEI AI Principal)",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@solana/web3.js": "^1.98.4",
+    "@x402/core": "^2.3.0",
+    "@x402/evm": "^2.3.0",
+    "@x402/express": "^2.3.0",
+    "@x402/mcp": "^2.3.0-alpha",
     "ethers": "^6.11.0",
     "express": "^4.18.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
